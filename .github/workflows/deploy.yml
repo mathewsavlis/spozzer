@@ -20,14 +20,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Validate public environment
+        env:
+          PUBLIC_LEADS_API_URL: ${{ vars.PUBLIC_LEADS_API_URL }}
+          PUBLIC_WHATSAPP_NUMBER: ${{ vars.PUBLIC_WHATSAPP_NUMBER }}
+        run: |
+          if [ -z "$PUBLIC_LEADS_API_URL" ]; then
+            echo "PUBLIC_LEADS_API_URL is missing"
+            exit 1
+          fi
+
+          if [ -z "$PUBLIC_WHATSAPP_NUMBER" ]; then
+            echo "PUBLIC_WHATSAPP_NUMBER is missing"
+            exit 1
+          fi
+
       - name: Build Astro site
         uses: withastro/action@v5
         env:
           PUBLIC_LEADS_API_URL: ${{ vars.PUBLIC_LEADS_API_URL }}
+          PUBLIC_WHATSAPP_NUMBER: ${{ vars.PUBLIC_WHATSAPP_NUMBER }}
 
   deploy:
     needs: build
-
     runs-on: ubuntu-latest
 
     environment:
