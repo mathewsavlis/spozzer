@@ -1,0 +1,475 @@
+---
+import { processData } from "../data/processData.js";
+import { assetPath } from "../lib/assets.js";
+---
+
+<section
+  id="processo"
+  class="process"
+  data-process
+  aria-labelledby="process-title"
+>
+  <div class="process__container">
+    <div class="process__copy">
+      <header class="process__header">
+        <h2
+          id="process-title"
+          class="process__section-title type-display"
+          data-process-header
+        >
+          {processData.sectionTitle}
+        </h2>
+
+        <p class="process__section-description type-body" data-process-header>
+          {processData.sectionDescription}
+        </p>
+      </header>
+
+      <ol class="process__list">
+        {
+          processData.steps.map((step) => (
+            <li class="process__step" data-process-step>
+              <span class="process__dot" data-step-dot aria-hidden="true" />
+
+              <span class="process__number" data-step-item>
+                ({step.id})
+              </span>
+
+              <h3 class="process__step-title type-display" data-step-item>
+                {step.title}
+              </h3>
+
+              <p class="process__step-description type-body" data-step-item>
+                {step.description}
+              </p>
+
+              {step.approval && (
+                <div class="process__approval" data-step-item>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>{step.approval}</span>
+                </div>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <aside class="process__media-column" aria-label="Processo criativo">
+      <div class="process__media-sticky">
+        <figure class="process__media-shell" data-process-media-shell>
+          <div class="process__media-reveal" data-process-media>
+            <div class="process__media-frame">
+              <div class="process__media-placeholder" aria-hidden="true"></div>
+
+              {
+                (processData.media.mobile || processData.media.desktop) && (
+                  <video
+                    class="process__visual process__video"
+                    data-process-visual
+                    muted
+                    loop
+                    playsinline
+                    webkit-playsinline
+                    preload="none"
+                    disablepictureinpicture
+                    aria-hidden="true"
+                  >
+                    {processData.media.mobile && (
+                      <source
+                        src={assetPath(processData.media.mobile)}
+                        type="video/mp4"
+                        media="(max-width: 47.999rem)"
+                      />
+                    )}
+
+                    {processData.media.desktop && (
+                      <source
+                        src={assetPath(processData.media.desktop)}
+                        type="video/webm"
+                        media="(min-width: 48rem)"
+                      />
+                    )}
+
+                    {processData.media.mobile && (
+                      <source
+                        src={assetPath(processData.media.mobile)}
+                        type="video/mp4"
+                      />
+                    )}
+                  </video>
+                )
+              }
+            </div>
+          </div>
+        </figure>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .process {
+    position: relative;
+
+    width: 100%;
+
+    padding: 0 var(--page-inline) 7rem;
+
+    /*
+   * O Process termina exatamente
+   * na cor em que o Contact começa.
+   *
+   * Não existe mais transição para preto.
+   */
+
+    background: linear-gradient(
+      to bottom,
+      #f6f4f0 0%,
+      #f1eee9 68%,
+      #eae6df 100%
+    );
+
+    color: var(--color-dark);
+  }
+
+  .process__container {
+    display: grid;
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4rem;
+  }
+
+  .process__header {
+    width: 100%;
+    max-width: 35rem;
+    margin-bottom: 4rem;
+  }
+
+  .process__section-title {
+    max-width: 10ch;
+    font-size: clamp(3.2rem, 12vw, 4.6rem);
+    line-height: 0.88;
+    text-wrap: balance;
+  }
+
+  .process__section-description {
+    width: calc(100% - var(--copy-gutter));
+    max-width: 25rem;
+    margin-top: 2.25rem;
+    color: rgba(42, 42, 42, 0.66);
+    font-size: clamp(0.76rem, 2.9vw, 0.88rem);
+    line-height: 1.9;
+    letter-spacing: 0.005em;
+    text-wrap: pretty;
+  }
+
+  .process__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 0 0.5rem;
+    padding: 0 0 0 2rem;
+    border-left: 1px solid rgba(42, 42, 42, 0.13);
+    list-style: none;
+  }
+
+  .process__step {
+    position: relative;
+    display: flex;
+    min-height: var(--process-step-min-height, 26svh);
+    max-width: 27rem;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: var(--copy-gutter);
+  }
+
+  .process__dot {
+    position: absolute;
+    top: 50%;
+    left: calc(-2rem - 4px);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    translate: 0 -50%;
+  }
+
+  .process__number {
+    display: block;
+    margin-bottom: 1.15rem;
+    color: var(--color-gold);
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.2em;
+  }
+
+  .process__step-title {
+    max-width: 18ch;
+    margin-bottom: 1.15rem;
+    font-size: clamp(1.55rem, 6.5vw, 1.95rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .process__step-description {
+    width: calc(100% - var(--copy-gutter));
+    max-width: 23.5rem;
+    margin-bottom: 1.45rem;
+    color: rgba(42, 42, 42, 0.66);
+    font-size: clamp(0.76rem, 3vw, 0.88rem);
+    line-height: 1.82;
+    letter-spacing: 0.005em;
+    text-wrap: pretty;
+  }
+
+  .process__approval {
+    display: flex;
+    max-width: 22rem;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--color-gold);
+  }
+
+  .process__approval svg {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .process__approval span {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .process__media-column {
+    order: -1;
+
+    /*
+   * Fallback.
+   */
+    width: 100vw;
+
+    /*
+   * Viewport dinâmica nos navegadores
+   * modernos.
+   */
+    width: 100dvw;
+
+    max-width: none;
+
+    /*
+   * Como este elemento ainda está
+   * dentro do grid com padding,
+   * justify-self:center faz ele romper
+   * igualmente para os dois lados.
+   */
+    justify-self: center;
+
+    margin-bottom: 1.5rem;
+  }
+
+  .process__media-sticky {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .process__media-shell {
+    position: relative;
+
+    width: 100%;
+
+    max-width: none;
+
+    aspect-ratio: 4 / 3;
+
+    margin: 0;
+
+    /*
+   * Sem moldura no mobile.
+   *
+   * Assim o vídeo realmente chega
+   * até as duas bordas da viewport.
+   */
+    padding: 0;
+
+    background: var(--color-light);
+
+    box-shadow: 0 1.125rem 2.25rem rgba(42, 42, 42, 0.08);
+  }
+
+  .process__media-reveal,
+  .process__media-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .process__media-frame {
+    background: #d8d1c7;
+  }
+
+  .process__media-placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, #ded8cf, #bbb2a7);
+  }
+
+  .process__visual {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .process__video {
+    display: block;
+    pointer-events: none;
+  }
+
+  @media (min-width: 48rem) {
+    .process {
+      padding: 10rem var(--page-inline);
+    }
+
+    .process__container {
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+      align-items: stretch;
+      gap: clamp(4rem, 7vw, 7rem);
+    }
+
+    .process__header {
+      max-width: 38rem;
+      margin-bottom: 4.75rem;
+    }
+
+    .process__section-title {
+      max-width: 11ch;
+      font-size: clamp(4.6rem, 5.5vw, 6.3rem);
+      line-height: 0.87;
+    }
+
+    .process__section-description {
+      max-width: 28rem;
+      margin-top: 2.5rem;
+      font-size: clamp(0.8rem, 0.9vw, 0.92rem);
+      line-height: 1.95;
+    }
+
+    .process__list {
+      padding-left: 2.75rem;
+    }
+
+    .process__step {
+      min-height: 32dvh;
+      max-width: 30rem;
+      padding-right: clamp(1rem, 3vw, 2.5rem);
+    }
+
+    .process__dot {
+      left: calc(-2.75rem - 4px);
+    }
+
+    .process__number {
+      margin-bottom: 1.3rem;
+    }
+
+    .process__step-title {
+      max-width: 20ch;
+      margin-bottom: 1.35rem;
+      font-size: clamp(1.65rem, 1.9vw, 2.15rem);
+    }
+
+    .process__step-description {
+      max-width: 25rem;
+      margin-bottom: 1.6rem;
+      font-size: clamp(0.8rem, 0.9vw, 0.92rem);
+      line-height: 1.85;
+    }
+
+    .process__media-column {
+      order: initial;
+
+      width: 100%;
+
+      max-width: none;
+
+      align-self: stretch;
+
+      justify-self: stretch;
+
+      margin-bottom: 0;
+    }
+
+    .process__media-sticky {
+      position: sticky;
+
+      top: 0;
+
+      height: 100dvh;
+    }
+
+    .process__media-shell {
+      width: 100%;
+
+      max-width: 32.5rem;
+
+      padding: 10px;
+
+      box-shadow: 0 1.125rem 2.25rem rgba(42, 42, 42, 0.11);
+    }
+
+    .process__media-sticky {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+    }
+
+    .process__media-shell {
+      padding: 10px;
+    }
+  }
+
+  @media (min-width: 48rem) and (max-height: 45rem) {
+    .process {
+      padding-block: 7rem;
+    }
+
+    .process__header {
+      margin-bottom: 3.5rem;
+    }
+
+    .process__section-title {
+      font-size: clamp(3.8rem, 4.7vw, 5rem);
+    }
+
+    .process__step {
+      min-height: 30dvh;
+    }
+  }
+</style>

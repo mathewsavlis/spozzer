@@ -1,0 +1,39 @@
+---
+interface Props {
+  src: string;
+  className?: string;
+}
+
+const {
+  src,
+  className = "",
+} = Astro.props;
+---
+
+<div class:list={["hero-wordmark", className]} aria-hidden="true">
+  <img
+    src={src}
+    alt=""
+    loading="eager"
+    decoding="async"
+  />
+</div>
+
+<style>
+  .hero-wordmark {
+    width: min(86vw, 20rem);
+    margin-inline: auto;
+  }
+
+  .hero-wordmark img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 48rem) {
+    .hero-wordmark {
+      width: min(72vw, 44rem);
+    }
+  }
+</style>

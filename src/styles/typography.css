@@ -1,0 +1,42 @@
+body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: var(--tracking-display);
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1;
+  font-synthesis: none;
+}
+
+.type-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  font-synthesis: none;
+}
+
+.type-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.type-body {
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  font-weight: 300;
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+}

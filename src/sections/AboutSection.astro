@@ -1,0 +1,409 @@
+---
+import { aboutData } from "../data/aboutData.js";
+
+import { assetPath } from "../lib/assets.js";
+
+const [primaryImage, secondaryImage] = aboutData.images;
+---
+
+<section
+  id="sobre"
+  class="about-stage"
+  data-about-stage
+  aria-labelledby="about-title"
+>
+  <div class="about-container">
+    <figure class="about-media" data-about-image>
+      <div class="about-media__inner">
+        <img
+          class="about-image
+            about-image--primary"
+          src={assetPath(primaryImage.src)}
+          alt={primaryImage.alt}
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+          data-about-photo="primary"
+        />
+
+        <img
+          class="about-image
+            about-image--secondary"
+          src={assetPath(secondaryImage.src)}
+          alt=""
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+          aria-hidden="true"
+          data-about-photo="secondary"
+        />
+      </div>
+    </figure>
+
+    <div class="about-content">
+      <p class="type-eyebrow
+          about-eyebrow" data-about-item>
+        {aboutData.eyebrow}
+      </p>
+
+      <h2
+        id="about-title"
+        class="about-title type-display"
+        data-about-item
+      >
+        {aboutData.title}
+      </h2>
+
+      <p class="about-description type-body" data-about-item>
+        {aboutData.description}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /*
+   * =========================================
+   * STAGE — FALLBACK
+   * =========================================
+   *
+   * Sem JavaScript o About continua
+   * sendo uma section normal.
+   */
+
+  .about-stage {
+    display: grid;
+
+    width: 100%;
+
+    min-height: 100svh;
+
+    align-items: start;
+
+    padding: calc(12svh + var(--safe-top)) var(--page-inline)
+      calc(3rem + var(--safe-bottom));
+
+    overflow: hidden;
+
+    background: var(--color-light);
+
+    color: var(--color-dark);
+  }
+
+  /*
+   * =========================================
+   * CONTAINER — FALLBACK
+   * =========================================
+   */
+
+  .about-container {
+    display: grid;
+
+    width: 100%;
+
+    max-width: var(--content-max);
+
+    margin-inline: auto;
+
+    justify-items: center;
+
+    gap: 1.5rem;
+  }
+
+  /*
+   * =========================================
+   * MEDIA — FALLBACK
+   * =========================================
+   */
+
+  .about-media {
+    width: calc(32svh * (4 / 5));
+
+    height: 32svh;
+
+    overflow: hidden;
+
+    border-radius: 2px;
+
+    background: #e4e1dc;
+
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .about-media__inner {
+    position: relative;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+  }
+
+  .about-image {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+  }
+
+  .about-image--secondary {
+    opacity: 0;
+  }
+
+  /*
+   * =========================================
+   * CONTENT
+   * =========================================
+   */
+
+  .about-content {
+    display: grid;
+
+    width: 100%;
+
+    max-width: 25rem;
+
+    gap: 0;
+  }
+
+  .about-eyebrow {
+    margin-bottom: 1.1rem;
+
+    color: var(--color-gold);
+
+    letter-spacing: 0.3em;
+  }
+
+  .about-title {
+    max-width: 100%;
+
+    color: var(--color-dark);
+
+    font-size: clamp(3.1rem, 12vw, 4.4rem);
+
+    line-height: 0.88;
+
+    white-space: nowrap;
+  }
+
+  .about-description {
+    width: calc(100% - var(--copy-gutter));
+
+    max-width: 22rem;
+
+    margin-top: 2.1rem;
+
+    color: rgba(42, 42, 42, 0.66);
+
+    font-size: clamp(0.76rem, 2.8vw, 0.87rem);
+
+    line-height: 1.9;
+
+    text-wrap: pretty;
+  }
+
+  /*
+   * =========================================
+   * ENHANCED MODE
+   * =========================================
+   *
+   * Aqui o About deixa de depender
+   * do fluxo vertical para posicionar
+   * sua composição.
+   */
+
+  .about-stage.is-enhanced {
+    position: relative;
+
+    min-height: 0;
+
+    height: var(--intro-canvas-height, 100%);
+  }
+
+  /*
+   * =========================================
+   * MOBILE ENHANCED
+   * =========================================
+   *
+   * Mesmo princípio usado no Testimonials:
+   *
+   * stage estável
+   * +
+   * coordenadas absolutas.
+   *
+   * Nenhum desses elementos consulta
+   * a altura dinâmica da viewport.
+   */
+
+  @media (max-width: 47.999rem) {
+    .about-stage.is-enhanced {
+      display: block;
+
+      padding: 0;
+
+      overflow: visible;
+
+      /*
+       * O branco visual que chega até
+       * 100dvh pertence ao panel externo
+       * definido no index.astro.
+       */
+      background: transparent;
+    }
+
+    /*
+     * O container ocupa exatamente
+     * o stable canvas.
+     */
+
+    .about-stage.is-enhanced .about-container {
+      position: absolute;
+
+      inset: 0;
+
+      display: block;
+
+      width: 100%;
+
+      max-width: none;
+
+      margin: 0;
+    }
+
+    /*
+     * =====================================
+     * IMAGE
+     * =====================================
+     *
+     * Antes:
+     *
+     * top via padding 12svh
+     * height 32svh
+     *
+     * Agora:
+     *
+     * top = 12% do stable canvas
+     * height = 32% do stable canvas
+     *
+     * Toolbar não participa mais.
+     */
+
+    .about-stage.is-enhanced .about-media {
+      position: absolute;
+
+      top: calc(12% + var(--safe-top));
+
+      left: 50%;
+
+      width: auto;
+
+      height: 32%;
+
+      aspect-ratio: 4 / 5;
+
+      margin: 0;
+
+      translate: -50% 0;
+    }
+
+    /*
+     * =====================================
+     * COPY
+     * =====================================
+     *
+     * 12% início da imagem
+     * +
+     * 32% altura da imagem
+     * =
+     * 44%
+     *
+     * Depois mantemos o gap original
+     * de 1.5rem.
+     */
+
+    .about-stage.is-enhanced .about-content {
+      position: absolute;
+
+      top: calc(44% + var(--safe-top) + 1.5rem);
+
+      left: 50%;
+
+      width: calc(100% - 3.5rem);
+
+      max-width: 22rem;
+
+      margin: 0;
+
+      translate: -50% 0;
+    }
+  }
+
+  /*
+   * =========================================
+   * DESKTOP
+   * =========================================
+   *
+   * Desktop continua com a composição
+   * que já existia.
+   */
+
+  @media (min-width: 48rem) {
+    .about-stage {
+      align-items: center;
+
+      padding: var(--page-inline);
+    }
+
+    .about-stage.is-enhanced {
+      display: grid;
+
+      overflow: hidden;
+
+      background: var(--color-light);
+    }
+
+    .about-container {
+      grid-template-columns:
+        auto
+        minmax(0, 28.125rem);
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 6vw;
+    }
+
+    .about-media {
+      width: calc(60dvh * (4 / 5));
+
+      height: 60dvh;
+
+      max-width: none;
+    }
+
+    .about-content {
+      max-width: 31rem;
+    }
+
+    .about-title {
+      font-size: clamp(3.7rem, 4.6vw, 5rem);
+    }
+
+    .about-description {
+      max-width: 26rem;
+
+      margin-top: 2.35rem;
+
+      font-size: clamp(0.8rem, 0.9vw, 0.92rem);
+    }
+  }
+</style>

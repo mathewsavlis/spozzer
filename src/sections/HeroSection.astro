@@ -1,0 +1,1410 @@
+---
+import { heroData } from "../data/heroData.js";
+import { portfolioData } from "../data/portfolioData.js";
+import { assetPath } from "../lib/assets.js";
+
+const portfolioItems = portfolioData.items;
+const totalItems = portfolioItems.length;
+---
+
+<section
+  class="hero-stage"
+  data-hero-stage
+  aria-label="Apresentação principal e portfólio"
+>
+  <!-- =====================================
+       HERO
+       ===================================== -->
+
+  <div class="hero-intro">
+    <div class="hero-media" aria-hidden="true">
+      <video
+        class="hero-video"
+        data-hero-video
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+        disablepictureinpicture
+      >
+        <source
+          src={assetPath(heroData.media.desktop)}
+          type="video/webm"
+          media="(min-width: 48rem)"
+        />
+
+        <source src={assetPath(heroData.media.mobile)} type="video/webm" />
+      </video>
+
+      <div class="hero-overlay" data-hero-overlay></div>
+    </div>
+
+    <div class="hero-content" data-hero-content>
+      <h1 class="hero-title" data-hero-item>
+        <span class="hero-title__first-line type-display">
+          {heroData.title.firstLine}
+        </span>
+
+        <span class="hero-title__second-line">
+          <span class="hero-title__signature type-script">
+            {heroData.title.accent}
+          </span>
+
+          <span class="hero-title__second-text type-display">
+            {heroData.title.secondLine}
+          </span>
+        </span>
+      </h1>
+
+      <p class="hero-description type-body" data-hero-item>
+        {heroData.description}
+      </p>
+
+      <div data-hero-item>
+        <a class="hero-cta" href={heroData.cta.href}>
+          {heroData.cta.label}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       PORTFOLIO
+       ===================================== -->
+
+  <section
+    class="portfolio-layer"
+    data-portfolio-layer
+    aria-labelledby="portfolio-title"
+  >
+    <header class="portfolio-header" data-portfolio-header>
+      <div class="portfolio-header__glass" aria-hidden="true"></div>
+
+      <div class="portfolio-header__inner" data-portfolio-title-content>
+        <h2 id="portfolio-title" class="portfolio-title type-display">
+          {portfolioData.title}
+        </h2>
+
+        <p class="portfolio-eyebrow type-eyebrow">
+          {portfolioData.eyebrow}
+        </p>
+      </div>
+    </header>
+
+    <div
+      class="portfolio-carousel"
+      data-carousel
+      data-portfolio-input
+      tabindex="0"
+      aria-label="Navegação do portfólio"
+    >
+      <ul
+        class="portfolio-track"
+        data-carousel-track
+        aria-label="Seleção de trabalhos"
+      >
+        {
+          portfolioItems.map((item, index) => {
+            const itemNumber = index + 1;
+
+            return (
+              <li
+                class="portfolio-card"
+                data-carousel-item
+                data-track-index={index}
+              >
+                <div class="portfolio-card__surface">
+                  <div class="portfolio-card__visual">
+                    <img
+                      class="portfolio-card__image"
+                      src={assetPath(item.image)}
+                      alt={item.title}
+                      width="675"
+                      height="1200"
+                      loading="lazy"
+                      fetchpriority="low"
+                      decoding="async"
+                    />
+
+                    <div class="portfolio-card__overlay" aria-hidden="true" />
+
+                    <div class="portfolio-card__footer">
+                      <span class="portfolio-card__counter">
+                        {String(itemNumber).padStart(2, "0")}
+                        {" / "}
+                        {String(totalItems).padStart(2, "0")}
+                      </span>
+
+                      <span class="portfolio-card__title">{item.title}</span>
+                    </div>
+                  </div>
+
+                  <div class="portfolio-card__light-frame" aria-hidden="true">
+                    <span
+                      class="
+                        portfolio-card__light-runner
+                        portfolio-card__light-runner--clockwise
+                      "
+                    />
+
+                    <span
+                      class="
+                        portfolio-card__light-runner
+                        portfolio-card__light-runner--counter
+                      "
+                    />
+                  </div>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+
+    <div class="portfolio-progress" aria-hidden="true">
+      <div class="portfolio-progress__fill" data-progress-fill></div>
+    </div>
+  </section>
+</section>
+
+<style>
+  /* =========================================
+     LIGHT BORDER PROPERTY
+     ========================================= */
+
+  @property --light-progress {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  /* =========================================
+     HERO
+     ========================================= */
+
+  .hero-stage {
+    position: relative;
+
+    width: 100%;
+
+    background: var(--color-deep);
+
+    color: var(--color-light);
+  }
+
+  .hero-intro {
+    position: relative;
+
+    display: grid;
+
+    width: 100%;
+
+    min-height: 100svh;
+
+    place-items: center;
+
+    overflow: hidden;
+
+    background: var(--color-deep);
+  }
+
+  /* =========================================
+     HERO MEDIA
+     ========================================= */
+
+  .hero-media {
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    background: var(--color-deep);
+  }
+
+  .hero-video {
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    pointer-events: none;
+  }
+
+  .hero-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    pointer-events: none;
+  }
+
+  /* =========================================
+     HERO CONTENT
+     ========================================= */
+
+  .hero-content {
+    position: relative;
+
+    z-index: var(--z-content);
+
+    display: grid;
+
+    width: min(92%, 48rem);
+
+    justify-items: center;
+
+    gap: 1.65rem;
+
+    margin-inline: auto;
+
+    text-align: center;
+  }
+
+  /* =========================================
+     HERO TITLE
+     ========================================= */
+
+  .hero-title {
+    display: grid;
+
+    width: min(96vw, 40rem);
+
+    max-width: none;
+
+    place-items: center;
+
+    justify-self: center;
+
+    gap: 0.48rem;
+
+    margin-inline: auto;
+
+    color: var(--color-light);
+
+    text-align: center;
+  }
+
+  .hero-title__first-line {
+    display: block;
+
+    width: fit-content;
+
+    max-width: 100%;
+
+    margin-inline: auto;
+
+    font-size: clamp(1.95rem, 8.4vw, 2.85rem);
+
+    line-height: 0.9;
+
+    word-spacing: -0.08em;
+
+    text-align: center;
+
+    white-space: nowrap;
+  }
+
+  .hero-title__second-line {
+    display: flex;
+
+    width: fit-content;
+
+    max-width: 100%;
+
+    align-items: baseline;
+
+    justify-content: center;
+
+    gap: 0.28em;
+
+    margin-inline: auto;
+
+    overflow: visible;
+
+    white-space: nowrap;
+  }
+
+  .hero-title__signature {
+    position: relative;
+
+    top: 0.04em;
+
+    display: inline-block;
+
+    padding-bottom: 0.28em;
+
+    margin-bottom: -0.28em;
+
+    overflow: visible;
+
+    color: var(--color-light);
+
+    font-size: clamp(2.2rem, 8.8vw, 3rem);
+
+    line-height: 1;
+
+    white-space: nowrap;
+  }
+
+  .hero-title__second-text {
+    display: inline-block;
+
+    font-size: clamp(2.15rem, 8.7vw, 3.05rem);
+
+    line-height: 0.88;
+
+    word-spacing: -0.12em;
+
+    text-align: center;
+
+    white-space: nowrap;
+  }
+
+  /* =========================================
+     HERO DESCRIPTION
+     ========================================= */
+
+  .hero-description {
+    width: calc(100% - (var(--copy-gutter) * 2));
+
+    max-width: 25rem;
+
+    margin: 0 auto;
+
+    color: rgba(246, 244, 240, 0.68);
+
+    font-size: clamp(0.74rem, 2.7vw, 0.86rem);
+
+    line-height: 1.9;
+
+    letter-spacing: 0.012em;
+
+    text-wrap: pretty;
+  }
+
+  /* =========================================
+     CTA
+     ========================================= */
+
+  .hero-cta {
+    display: inline-flex;
+
+    min-height: 3rem;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 1rem 2.5rem;
+
+    border: 1px solid rgba(246, 244, 240, 0.5);
+
+    background: transparent;
+
+    color: var(--color-light);
+
+    font-family: var(--font-sans);
+
+    font-size: 0.625rem;
+
+    font-weight: 500;
+
+    line-height: 1;
+
+    letter-spacing: 0.22em;
+
+    text-transform: uppercase;
+
+    transition:
+      background-color var(--duration-normal) var(--ease-premium),
+      border-color var(--duration-normal) var(--ease-premium),
+      color var(--duration-normal) var(--ease-premium);
+  }
+
+  .hero-cta:focus-visible {
+    border-color: var(--color-light);
+
+    background: var(--color-light);
+
+    color: var(--color-dark);
+
+    outline: 2px solid var(--color-gold);
+
+    outline-offset: 4px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero-cta:hover {
+      border-color: var(--color-light);
+
+      background: var(--color-light);
+
+      color: var(--color-dark);
+    }
+  }
+
+  /* =========================================
+     PORTFOLIO
+     ========================================= */
+
+  .portfolio-layer {
+    position: relative;
+
+    display: grid;
+
+    width: 100%;
+
+    min-height: 100svh;
+
+    align-content: center;
+
+    gap: 2.5rem;
+
+    padding: calc(3rem + var(--safe-top)) 0 calc(3rem + var(--safe-bottom));
+
+    overflow: hidden;
+
+    background: var(--color-deep);
+
+    color: var(--color-light);
+  }
+
+  .portfolio-header {
+    position: relative;
+
+    width: min(90%, 56.25rem);
+
+    margin-inline: auto;
+
+    text-align: center;
+  }
+
+  .portfolio-header__inner {
+    position: relative;
+
+    z-index: 1;
+
+    display: grid;
+
+    justify-items: center;
+
+    gap: 0.9rem;
+  }
+
+  .portfolio-title {
+    color: var(--color-light);
+
+    font-size: clamp(3rem, 12vw, 4.5rem);
+
+    line-height: 0.9;
+  }
+
+  .portfolio-eyebrow {
+    color: var(--color-gold);
+  }
+
+  /* =========================================
+     CAROUSEL
+     ========================================= */
+
+  .portfolio-carousel {
+    width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    overscroll-behavior-inline: contain;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .portfolio-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .portfolio-track {
+    display: flex;
+
+    width: max-content;
+
+    gap: clamp(0.75rem, 3vw, 1.25rem);
+
+    padding-inline: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  /* =========================================
+     CARD
+     ========================================= */
+
+  .portfolio-card {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    height: min(75lvh, 43rem);
+
+    width: min(calc(75lvh * (9 / 16)), 82vw);
+
+    transform-origin: center center;
+  }
+
+  .portfolio-card__surface {
+    position: relative;
+
+    isolation: isolate;
+
+    width: 100%;
+
+    height: 100%;
+
+    border-radius: 6px;
+
+    box-shadow:
+      0 22px 68px rgba(0, 0, 0, 0.48),
+      0 6px 22px rgba(0, 0, 0, 0.28);
+
+    transition: box-shadow 600ms var(--ease-premium);
+  }
+
+  .portfolio-card__visual {
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    border-radius: inherit;
+
+    background: #151515;
+  }
+
+  .portfolio-card__image {
+    position: relative;
+
+    z-index: 1;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    transform: scale(1);
+
+    transition:
+      transform 720ms var(--ease-premium),
+      filter 720ms var(--ease-premium);
+  }
+
+  .portfolio-card__overlay {
+    position: absolute;
+
+    z-index: 2;
+
+    inset: 0;
+
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.08) 45%,
+      transparent 100%
+    );
+
+    pointer-events: none;
+
+    transition: opacity 520ms var(--ease-premium);
+  }
+
+  /* =========================================
+     CARD FOOTER
+     ========================================= */
+
+  .portfolio-card__footer {
+    position: absolute;
+
+    z-index: 8;
+
+    right: 1.1rem;
+
+    bottom: 1.35rem;
+
+    left: 1.1rem;
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(2.75rem, 1fr)
+      auto
+      minmax(2.75rem, 1fr);
+
+    align-items: end;
+
+    width: auto;
+
+    transition:
+      transform 540ms var(--ease-premium),
+      opacity 540ms var(--ease-premium);
+  }
+
+  .portfolio-card__counter {
+    position: relative;
+
+    grid-column: 1;
+
+    justify-self: start;
+
+    align-self: end;
+
+    color: rgba(246, 244, 240, 0.58);
+
+    font-family: var(--font-sans);
+
+    font-size: clamp(0.48rem, 1.65vw, 0.56rem);
+
+    font-weight: 300;
+
+    line-height: 1;
+
+    letter-spacing: 0.1em;
+
+    white-space: nowrap;
+
+    transition:
+      transform 480ms var(--ease-premium),
+      opacity 480ms var(--ease-premium),
+      color 480ms var(--ease-premium);
+  }
+
+  .portfolio-card__title {
+    grid-column: 2;
+
+    justify-self: center;
+
+    max-width: min(15ch, 60vw);
+
+    color: rgba(246, 244, 240, 0.94);
+
+    font-family: var(--font-sans);
+
+    font-size: clamp(0.58rem, 2.15vw, 0.7rem);
+
+    font-weight: 400;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.12em;
+
+    text-align: center;
+
+    text-transform: uppercase;
+
+    white-space: normal;
+
+    text-wrap: balance;
+
+    overflow-wrap: normal;
+
+    transition:
+      transform 520ms var(--ease-premium),
+      color 520ms var(--ease-premium),
+      letter-spacing 520ms var(--ease-premium);
+  }
+
+  /* =========================================
+     DOUBLE LIGHT BORDER
+     ========================================= */
+
+  .portfolio-card__light-frame {
+    position: absolute;
+
+    z-index: 8;
+
+    inset: 0;
+
+    border-radius: inherit;
+
+    pointer-events: none;
+  }
+
+  .portfolio-card__light-frame::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border: 1px solid rgba(246, 244, 240, 0.62);
+
+    border-radius: inherit;
+
+    opacity: 0;
+
+    box-shadow:
+      0 0 4px rgba(255, 255, 255, 0.46),
+      0 0 10px rgba(246, 244, 240, 0.16);
+
+    transition: opacity 180ms ease;
+  }
+
+  .portfolio-card__light-runner {
+    --light-progress: 0deg;
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: inherit;
+
+    padding: 1px;
+
+    opacity: 0;
+
+    background:
+      conic-gradient(
+        from var(--light-progress),
+        rgba(255, 255, 255, 1) 0deg,
+        rgba(246, 244, 240, 0.84) 1deg,
+        rgba(246, 244, 240, 0.22) 3deg,
+        transparent 5deg,
+        transparent 360deg
+      ),
+      conic-gradient(
+        from 0deg,
+        rgba(246, 244, 240, 0.22) 0deg,
+        rgba(246, 244, 240, 0.72) var(--light-progress),
+        transparent var(--light-progress),
+        transparent 360deg
+      );
+
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+
+    -webkit-mask-composite: xor;
+
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+
+    mask-composite: exclude;
+
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8))
+      drop-shadow(0 0 8px rgba(246, 244, 240, 0.24));
+  }
+
+  .portfolio-card__light-runner--counter {
+    transform: scaleX(-1);
+  }
+
+  @keyframes portfolio-light-run {
+    from {
+      --light-progress: 0deg;
+    }
+
+    to {
+      --light-progress: 180deg;
+    }
+  }
+
+  /* =========================================
+     HOVER
+     ========================================= */
+
+  @media (hover: hover) and (pointer: fine) {
+    .portfolio-card:hover .portfolio-card__surface {
+      box-shadow:
+        0 42px 135px rgba(0, 0, 0, 0.66),
+        0 14px 42px rgba(0, 0, 0, 0.38);
+    }
+
+    .portfolio-card:hover .portfolio-card__image {
+      transform: scale(1.028);
+
+      filter: brightness(1.035) saturate(1.025);
+    }
+
+    .portfolio-card:hover .portfolio-card__overlay {
+      opacity: 0.92;
+    }
+
+    .portfolio-card:hover .portfolio-card__footer {
+      transform: translateY(-5px);
+    }
+
+    .portfolio-card:hover .portfolio-card__counter {
+      transform: translateY(-2px);
+
+      color: rgba(246, 244, 240, 0.82);
+
+      opacity: 0.95;
+    }
+
+    .portfolio-card:hover .portfolio-card__title {
+      transform: translateY(-2px);
+
+      color: var(--color-light);
+
+      letter-spacing: 0.18em;
+    }
+
+    .portfolio-card:hover .portfolio-card__light-runner {
+      opacity: 1;
+
+      animation: portfolio-light-run 900ms cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+    }
+
+    .portfolio-card:hover .portfolio-card__light-frame::before {
+      opacity: 1;
+
+      transition-delay: 760ms;
+    }
+  }
+
+  /* =========================================
+     PROGRESS
+     ========================================= */
+
+  .portfolio-progress {
+    width: min(calc(100% - 2.5rem), 35rem);
+
+    height: 1px;
+
+    margin-inline: auto;
+
+    overflow: hidden;
+
+    background: transparent;
+  }
+
+  .portfolio-progress__fill {
+    width: 100%;
+
+    height: 100%;
+
+    background: var(--color-gold);
+
+    transform: scaleX(0);
+
+    transform-origin: left center;
+  }
+
+  /* =========================================
+     ENHANCED MODE
+     ========================================= */
+
+  .hero-stage.is-enhanced {
+    position: relative;
+
+    width: 100%;
+
+    height: var(--intro-canvas-height, 100%);
+
+    overflow: visible;
+  }
+
+  .hero-stage.is-enhanced .hero-intro {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    min-height: 0;
+
+    height: 100%;
+
+    overflow: visible;
+  }
+
+  .hero-stage.is-enhanced .hero-content {
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    z-index: var(--z-content);
+
+    margin: 0;
+
+    translate: -50% -50%;
+  }
+
+  .hero-stage.is-enhanced .portfolio-layer {
+    position: absolute;
+
+    inset: 0;
+
+    min-height: 0;
+
+    height: 100%;
+
+    padding: 0;
+
+    background: transparent;
+
+    pointer-events: none;
+  }
+
+  .hero-stage.is-enhanced .portfolio-header {
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    z-index: 30;
+
+    width: min(90%, 56.25rem);
+
+    margin: 0;
+
+    translate: -50% -50%;
+  }
+
+  .hero-stage.is-enhanced .portfolio-carousel {
+    position: absolute;
+
+    top: 50%;
+
+    left: 0;
+
+    z-index: 10;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    translate: 0 -50%;
+  }
+
+  .hero-stage.is-enhanced .portfolio-progress {
+    position: absolute;
+
+    right: 0;
+
+    bottom: 0;
+
+    left: 0;
+
+    z-index: 40;
+
+    width: 100%;
+
+    margin: 0;
+  }
+
+  .hero-stage.is-enhanced .portfolio-track {
+    align-items: center;
+  }
+
+  /* =========================================
+     MOBILE ENHANCED
+     ========================================= */
+
+  @media (max-width: 47.999rem) {
+    .hero-stage.is-enhanced .hero-media {
+      position: absolute;
+
+      top: 0;
+
+      right: 0;
+
+      bottom: auto;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 100dvh;
+    }
+
+    .hero-stage.is-enhanced .portfolio-layer {
+      overflow: visible;
+    }
+
+    /*
+     * O próprio header vira o vidro.
+     *
+     * Isso evita o problema do Safari
+     * com backdrop-filter em pseudo-elementos
+     * dentro de elementos transformados.
+     */
+
+    /* =========================================
+   MOBILE PORTFOLIO GLASS
+   ========================================= */
+
+    .hero-stage.is-enhanced .portfolio-header {
+      display: grid;
+
+      width: 100vw;
+
+      width: 100dvw;
+
+      max-width: none;
+
+      height: 19%;
+
+      place-items: center;
+
+      margin: 0;
+
+      padding: 0;
+
+      overflow: visible;
+
+      box-sizing: border-box;
+
+      /*
+   * IMPORTANTE:
+   *
+   * O header em si não possui
+   * absolutamente nenhum vidro.
+   *
+   * Isso elimina o retângulo visível
+   * durante a subida e a hairline
+   * na posição final.
+   */
+
+      background: transparent;
+
+      border: 0;
+
+      box-shadow: none;
+
+      -webkit-backdrop-filter: none;
+
+      backdrop-filter: none;
+    }
+
+    /* =========================================
+   GLASS LAYER
+   ========================================= */
+
+    .hero-stage.is-enhanced .portfolio-header__glass {
+      position: absolute;
+
+      /*
+   * Passa alguns pixels dos limites
+   * geométricos do header.
+   *
+   * Isso evita seam/hairline causada
+   * por arredondamento de subpixel
+   * no Safari.
+   */
+
+      top: -2px;
+
+      right: 0;
+
+      bottom: -3px;
+
+      left: 0;
+
+      z-index: 0;
+
+      width: 100%;
+
+      pointer-events: none;
+
+      /*
+   * Cor também desaparece
+   * progressivamente.
+   */
+
+      background: linear-gradient(
+        to bottom,
+
+        rgba(9, 9, 9, 0) 0%,
+
+        rgba(9, 9, 9, 0.22) 8%,
+
+        rgba(9, 9, 9, 0.32) 24%,
+
+        rgba(9, 9, 9, 0.26) 46%,
+
+        rgba(9, 9, 9, 0.13) 70%,
+
+        rgba(9, 9, 9, 0.035) 88%,
+
+        transparent 100%
+      );
+
+      /*
+   * Blur principal.
+   *
+   * Existe apenas nessa camada.
+   */
+
+      -webkit-backdrop-filter: blur(18px) saturate(0.88);
+
+      backdrop-filter: blur(18px) saturate(0.88);
+
+      /*
+   * MÁSCARA DO VIDRO
+   *
+   * 0 -> 8%
+   * faz um feather extremamente curto
+   * na borda superior.
+   *
+   * Isso é o que impede enxergar
+   * a caixa enquanto ela sobe.
+   *
+   * Depois o vidro chega rapidamente
+   * à força máxima e desaparece
+   * gradualmente até o final.
+   */
+
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+
+        transparent 0%,
+
+        rgba(0, 0, 0, 0.58) 7%,
+
+        #000 16%,
+
+        #000 34%,
+
+        rgba(0, 0, 0, 0.88) 50%,
+
+        rgba(0, 0, 0, 0.58) 68%,
+
+        rgba(0, 0, 0, 0.22) 84%,
+
+        transparent 100%
+      );
+
+      mask-image: linear-gradient(
+        to bottom,
+
+        transparent 0%,
+
+        rgba(0, 0, 0, 0.58) 7%,
+
+        #000 16%,
+
+        #000 34%,
+
+        rgba(0, 0, 0, 0.88) 50%,
+
+        rgba(0, 0, 0, 0.58) 68%,
+
+        rgba(0, 0, 0, 0.22) 84%,
+
+        transparent 100%
+      );
+    }
+
+    /* =========================================
+   PORTFOLIO COPY
+   ========================================= */
+
+    .hero-stage.is-enhanced .portfolio-header__inner {
+      position: relative;
+
+      z-index: 1;
+
+      display: grid;
+
+      width: min(90vw, 56.25rem);
+
+      place-items: center;
+
+      align-content: center;
+
+      gap: 0.7rem;
+
+      margin: 0 auto;
+
+      padding: 0;
+
+      text-align: center;
+    }
+
+    .hero-stage.is-enhanced .portfolio-progress {
+      top: calc(100dvh - 1px);
+
+      right: 0;
+
+      bottom: auto;
+
+      left: 0;
+
+      width: 100%;
+
+      margin: 0;
+    }
+
+    .hero-stage.is-enhanced {
+      container-type: size;
+    }
+
+    .hero-stage.is-enhanced .portfolio-card {
+      height: 94cqh;
+
+      width: min(86vw, 23rem);
+    }
+  }
+
+  /* =========================================
+     DESKTOP
+     ========================================= */
+
+  @media (min-width: 48rem) {
+    .hero-stage.is-enhanced {
+      overflow: hidden;
+    }
+
+    .hero-content {
+      width: min(92%, 78rem);
+
+      gap: 2.35rem;
+    }
+
+    .hero-stage.is-enhanced .hero-content {
+      right: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      max-width: none;
+
+      padding-inline: var(--page-inline);
+
+      translate: 0 -50%;
+    }
+
+    .hero-title {
+      width: min(82vw, 60rem);
+
+      max-width: 60rem;
+
+      justify-self: center;
+
+      gap: clamp(0.5rem, 1vh, 0.75rem);
+
+      margin-inline: auto;
+    }
+
+    .hero-title__first-line {
+      justify-self: center;
+
+      font-size: clamp(3.8rem, 4.7vw, 5.35rem);
+    }
+
+    .hero-title__second-line {
+      justify-self: center;
+
+      gap: clamp(0.5rem, 0.7vw, 0.7rem);
+
+      margin-inline: auto;
+    }
+
+    .hero-title__signature {
+      top: 0.025em;
+
+      padding-bottom: 0.3em;
+
+      margin-bottom: -0.3em;
+
+      font-size: clamp(3.7rem, 4.45vw, 5rem);
+    }
+
+    .hero-title__second-text {
+      font-size: clamp(3.85rem, 4.65vw, 5.25rem);
+    }
+
+    .hero-description {
+      max-width: 35rem;
+
+      font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+
+      line-height: 1.95;
+    }
+
+    .hero-cta {
+      padding-inline: 2.5rem;
+    }
+
+    .portfolio-title {
+      font-size: clamp(3.7rem, 4.6vw, 5.2rem);
+    }
+
+    .portfolio-layer {
+      gap: 3rem;
+    }
+
+    .portfolio-card {
+      width: calc(65svh * (9 / 16));
+
+      height: 65svh;
+    }
+
+    .portfolio-card__footer {
+      right: 2rem;
+
+      bottom: 2.25rem;
+
+      left: 2rem;
+
+      grid-template-columns:
+        minmax(3.5rem, 1fr)
+        auto
+        minmax(3.5rem, 1fr);
+    }
+
+    .portfolio-card__title {
+      max-width: 18ch;
+
+      font-size: clamp(0.64rem, 0.75vw, 0.78rem);
+
+      letter-spacing: 0.14em;
+    }
+
+    .portfolio-card__counter {
+      font-size: 0.56rem;
+
+      letter-spacing: 0.12em;
+    }
+
+    .hero-stage.is-enhanced .portfolio-carousel {
+      top: 55%;
+    }
+  }
+
+  /* =========================================
+     REDUCED MOTION
+     ========================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cta,
+    .portfolio-card__surface,
+    .portfolio-card__image,
+    .portfolio-card__overlay,
+    .portfolio-card__footer,
+    .portfolio-card__counter,
+    .portfolio-card__title {
+      transition: none;
+    }
+
+    .portfolio-card__light-frame {
+      display: none;
+    }
+  }
+</style>

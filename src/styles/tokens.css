@@ -1,0 +1,38 @@
+:root {
+  /* Colors */
+  --color-dark: #2a2a2a;
+  --color-deep: #090909;
+  --color-light: #f6f4f0;
+  --color-gold: #c5a059;
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-script: "Italianno", cursive;
+  --font-sans: "Montserrat", Arial, sans-serif;
+
+  --type-eyebrow: 0.625rem;
+  --type-body: 0.875rem;
+
+  --leading-body: 1.75;
+  --tracking-normal: 0;
+  --tracking-eyebrow: 0.28em;
+  --tracking-display: -0.035em;
+
+  /* Layout */
+  --content-max: 90rem;
+  --page-inline: clamp(1.25rem, 5vw, 5rem);
+  --copy-gutter: clamp(0.75rem, 3vw, 1.5rem);
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Motion */
+  --duration-fast: 180ms;
+  --duration-normal: 320ms;
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layering */
+  --z-base: 1;
+  --z-content: 10;
+}

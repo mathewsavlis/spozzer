@@ -1,17 +1,342 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 
+import HeroSection from "../sections/HeroSection.astro";
+import AboutSection from "../sections/AboutSection.astro";
+import TestimonialSection from "../sections/TestimonialSection.astro";
+import ServiceSection from "../sections/ServiceSection.astro";
+import ProcessSection from "../sections/ProcessSection.astro";
+import ContactSection from "../sections/ContactSection.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Sthefani Pozzer"
+  description="Fotografia autoral, direção artística e experiências visuais construídas com intenção."
+>
+  <main>
+    <!--
+      =========================================
+      INTRO EXPERIENCE
+      =========================================
+
+      Hero + Portfolio + About compartilham
+      o mesmo canvas estável.
+
+      A geometria é controlada por:
+
+      --intro-canvas-height
+
+      definido por introExperience.js.
+    -->
+
+    <div class="intro-master" data-intro-master>
+      <!--
+        HERO + PORTFOLIO
+      -->
+
+      <div class="intro-panel
+          intro-panel--hero" data-intro-hero-panel>
+        <HeroSection />
+      </div>
+
+      <!--
+        ABOUT
+      -->
+
+      <div
+        class="intro-panel
+          intro-panel--about"
+        data-intro-about-panel
+      >
+        <AboutSection />
+      </div>
+    </div>
+
+    <!--
+      =========================================
+      NORMAL FLOW
+      =========================================
+    -->
+
+    <TestimonialSection />
+
+    <ServiceSection />
+
+    <ProcessSection />
+
+    <ContactSection />
+  </main>
+</BaseLayout>
+
+<script>
+  import { initPageAnimations } from "../scripts/pageAnimations.js";
+
+
+  /*
+   * =========================================
+   * PAGE ANIMATIONS
+   * =========================================
+   */
+
+  initPageAnimations();
+
+
+</script>
+
+<style>
+  /*
+   * =========================================
+   * DEFAULT / PROGRESSIVE ENHANCEMENT
+   * =========================================
+   *
+   * Sem JavaScript:
+   *
+   * Hero
+   * Portfolio
+   * About
+   *
+   * continuam no fluxo normal.
+   *
+   * Não escondemos conteúdo por padrão.
+   */
+
+  .intro-master {
+    position: relative;
+
+    width: 100%;
+  }
+
+  .intro-panel {
+    position: relative;
+
+    width: 100%;
+  }
+
+  /*
+   * =========================================
+   * ENHANCED INTRO
+   * =========================================
+   *
+   * introExperience.js adiciona
+   * .is-enhanced somente depois que:
+   *
+   * - o DOM é validado;
+   * - a altura mobile é capturada;
+   * - a experiência pode ser iniciada.
+   *
+   * No mobile:
+   *
+   * --intro-canvas-height
+   *
+   * permanece estável mesmo quando
+   * a toolbar aparece/desaparece.
+   */
+
+  .intro-master.is-enhanced {
+    position: relative;
+
+    width: 100%;
+
+    height: var(--intro-canvas-height, 100svh);
+
+    /*
+     * IMPORTANTE:
+     *
+     * O conteúdo continua preso
+     * ao canvas estável.
+     *
+     * Mas superfícies visuais podem
+     * ultrapassá-lo.
+     */
+    overflow: visible;
+
+    isolation: isolate;
+  }
+
+  /*
+   * =========================================
+   * INTRO PANELS
+   * =========================================
+   *
+   * Ambos usam exatamente a mesma
+   * geometria congelada.
+   *
+   * Nenhum panel cresce quando a
+   * toolbar desaparece.
+   */
+
+  .intro-master.is-enhanced .intro-panel {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: var(--intro-canvas-height, 100svh);
+
+    min-height: 0;
+  }
+
+  /*
+   * =========================================
+   * ABOUT PANEL
+   * =========================================
+   *
+   * About permanece atrás do Hero
+   * durante toda a master timeline.
+   */
+
+  .intro-master.is-enhanced .intro-panel--about {
+    z-index: var(--z-base);
+
+    background: var(--color-light);
+  }
+
+  /*
+   * =========================================
+   * ABOUT VISUAL SURFACE — MOBILE
+   * =========================================
+   *
+   * Aqui está a separação fundamental:
+   *
+   * PANEL
+   * → geometria estável
+   *
+   * ::before
+   * → superfície visual dinâmica
+   *
+   * Exemplo:
+   *
+   * canvas = 663px
+   * viewport = 797px
+   *
+   * About continua geometricamente
+   * com 663px.
+   *
+   * O ::before pinta branco até 797px.
+   *
+   * Isso NÃO:
+   *
+   * - move conteúdo;
+   * - altera o tamanho do panel;
+   * - altera porcentagens de GSAP;
+   * - reposiciona foto;
+   * - reposiciona textos.
+   */
+
+  @media (max-width: 47.999rem) {
+    .intro-master.is-enhanced .intro-panel--about::before {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+
+      right: 0;
+
+      left: 0;
+
+      /*
+       * Fica atrás do conteúdo do About,
+       * mas dentro do seu stacking context.
+       */
+      z-index: -1;
+
+      width: 100%;
+
+      /*
+       * Somente esta superfície reage
+       * à viewport dinâmica.
+       */
+      height: 100dvh;
+
+      background: var(--color-light);
+
+      pointer-events: none;
+    }
+  }
+
+  /*
+   * =========================================
+   * HERO PANEL
+   * =========================================
+   *
+   * O fundo escuro é apenas fallback.
+   *
+   * No HeroSection enhanced, quem cobre
+   * visualmente a viewport mobile é:
+   *
+   * .hero-media
+   * height: 100dvh;
+   *
+   * portanto o vídeo consegue ocupar
+   * toda a área revelada pela toolbar.
+   */
+
+  .intro-master.is-enhanced .intro-panel--hero {
+    z-index: var(--z-content);
+
+    background: var(--color-deep);
+
+    height: 100dvh;
+  }
+
+  /*
+   * =========================================
+   * ABOUT VISUAL SURFACE
+   * =========================================
+   */
+
+  .intro-master.is-enhanced .intro-panel--about::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    left: 0;
+
+    z-index: -1;
+
+    width: 100%;
+    height: 100dvh;
+
+    background: var(--color-light);
+
+    pointer-events: none;
+  }
+
+  /*
+   * =========================================
+   * DESKTOP
+   * =========================================
+   *
+   * Desktop não possui o mesmo problema
+   * estrutural das barras mobile.
+   *
+   * Mantemos 100dvh normalmente.
+   */
+
+  @media (min-width: 48rem) {
+    .intro-master.is-enhanced {
+      height: 100dvh;
+
+      overflow: hidden;
+    }
+
+    .intro-master.is-enhanced .intro-panel {
+      height: 100%;
+
+      min-height: 0;
+    }
+
+    /*
+     * No desktop não precisamos
+     * da extensão visual mobile.
+     */
+
+    .intro-master.is-enhanced .intro-panel--about::before {
+      display: none;
+    }
+  }
+</style>

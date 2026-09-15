@@ -1,0 +1,641 @@
+---
+import { testimonials } from "../data/testimonialsData.js";
+import { assetPath } from "../lib/assets.js";
+---
+
+<section
+  id="depoimentos"
+  class="testimonial-section"
+  data-testimonials
+  aria-labelledby="testimonials-title"
+>
+  <h2 id="testimonials-title" class="visually-hidden">Depoimentos</h2>
+
+  <div class="testimonial-background" aria-hidden="true"></div>
+
+  <!--
+    Esta transição fica ATRÁS dos cards.
+    Nunca sobre eles.
+  -->
+  <div class="testimonial-bottom-transition" aria-hidden="true"></div>
+
+  <div
+    class="testimonial-stage"
+    data-testimonial-stage
+    tabindex="0"
+    aria-label="Carrossel de depoimentos"
+    aria-roledescription="carrossel"
+  >
+    <div class="testimonial-list">
+      {
+        testimonials.map((testimonial, index) => (
+          <article
+            class="testimonial-card"
+            data-testimonial-card
+            data-index={index}
+          >
+            <div class="testimonial-media">
+              {testimonial.image ? (
+                <img
+                  src={assetPath(testimonial.image)}
+                  alt=""
+                  width="900"
+                  height="1200"
+                  loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
+                />
+              ) : (
+                <div class="testimonial-placeholder" aria-hidden="true" />
+              )}
+
+              <div class="testimonial-media-gradient" aria-hidden="true" />
+
+              <div
+                class="testimonial-side-darkness"
+                data-card-darkness
+                aria-hidden="true"
+              />
+            </div>
+
+            <div class="testimonial-card-content">
+              <div class="testimonial-copy">
+                <header class="testimonial-person">
+                  <h3 class="testimonial-name type-display">
+                    {testimonial.name}
+                  </h3>
+
+                  <p class="testimonial-role">{testimonial.role}</p>
+                </header>
+
+                <blockquote class="testimonial-quote">
+                  <p class="testimonial-text type-body">{testimonial.text}</p>
+                </blockquote>
+              </div>
+
+              <span class="testimonial-number">
+                ({String(testimonial.id).padStart(2, "0")})
+              </span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <nav class="testimonial-controls" aria-label="Navegação dos depoimentos">
+    <button
+      type="button"
+      class="testimonial-button"
+      data-testimonial-prev
+      aria-label="Depoimento anterior"
+      disabled
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15 18L9 12L15 6"></path>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="testimonial-button"
+      data-testimonial-next
+      aria-label="Próximo depoimento"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 18L15 12L9 6"></path>
+      </svg>
+    </button>
+  </nav>
+</section>
+
+<style>
+  /* =========================================
+     SECTION
+  ========================================= */
+
+  .testimonial-section {
+    position: relative;
+
+    width: 100%;
+    min-height: 100svh;
+
+    overflow: hidden;
+
+    background: #282828;
+
+    color: var(--color-light);
+
+    isolation: isolate;
+  }
+
+  .testimonial-background {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    background: linear-gradient(
+      to bottom,
+      #292929 0%,
+      #202020 55%,
+      #171717 100%
+    );
+
+    pointer-events: none;
+  }
+
+  /*
+   * Sempre atrás dos cards.
+   */
+
+  .testimonial-bottom-transition {
+    position: absolute;
+
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 1;
+
+    height: 32%;
+
+    background: linear-gradient(
+      to bottom,
+      rgba(9, 9, 9, 0) 0%,
+      rgba(9, 9, 9, 0.18) 35%,
+      rgba(9, 9, 9, 0.62) 72%,
+      #090909 100%
+    );
+
+    pointer-events: none;
+  }
+
+  /* =========================================
+     STATIC FALLBACK
+  ========================================= */
+
+  .testimonial-stage {
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+    min-height: 100svh;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .testimonial-stage::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonial-list {
+    position: relative;
+
+    z-index: 10;
+
+    display: flex;
+
+    width: max-content;
+    min-height: 100svh;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 8svh 11vw 9rem;
+  }
+
+  /* =========================================
+     CARD
+  ========================================= */
+
+  .testimonial-card {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: min(78vw, 310px);
+
+    aspect-ratio: 9 / 16;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(246, 244, 240, 0.09);
+
+    border-radius: 27px;
+
+    background: #171717;
+
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.46);
+
+    transform-style: preserve-3d;
+  }
+
+  /* =========================================
+     MEDIA
+  ========================================= */
+
+  .testimonial-media {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    background: #171717;
+  }
+
+  .testimonial-media img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0.92;
+  }
+
+  .testimonial-placeholder {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(155deg, #272727 0%, #1b1b1b 42%, #101010 100%);
+  }
+
+  .testimonial-media-gradient {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.03) 0%,
+      rgba(10, 10, 10, 0.08) 42%,
+      rgba(10, 10, 10, 0.52) 68%,
+      rgba(8, 8, 8, 0.96) 100%
+    );
+
+    pointer-events: none;
+  }
+
+  .testimonial-side-darkness {
+    position: absolute;
+    inset: 0;
+
+    background: #000;
+
+    opacity: 0;
+
+    pointer-events: none;
+  }
+
+  /* =========================================
+     CONTENT
+  ========================================= */
+
+  .testimonial-card-content {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.75rem 1.8rem 2rem;
+  }
+
+  .testimonial-number {
+    position: absolute;
+
+    left: 1.8rem;
+
+    bottom: 1.75rem;
+
+    color: rgba(246, 244, 240, 0.52);
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.18em;
+  }
+
+  .testimonial-copy {
+    display: flex;
+    width: 100%;
+    max-width: 22rem;
+    flex-direction: column;
+    gap: 1.15rem;
+
+    margin-bottom: 2.35rem;
+  }
+
+  .testimonial-quote {
+    padding: 0;
+  }
+
+  .testimonial-text {
+    max-width: 100%;
+    color: rgba(246, 244, 240, 0.84);
+    font-size: clamp(0.72rem, 2.7vw, 0.82rem);
+    line-height: 1.72;
+    letter-spacing: 0.005em;
+    text-wrap: pretty;
+  }
+
+  .testimonial-person {
+    margin: 0;
+  }
+
+  .testimonial-name {
+    color: rgba(246, 244, 240, 0.98);
+    font-size: clamp(1.45rem, 5.8vw, 1.85rem);
+    line-height: 0.94;
+    text-transform: none;
+  }
+
+  .testimonial-role {
+    margin-top: 0.4rem;
+    color: var(--color-gold);
+    font-family: var(--font-sans);
+    font-size: 0.52rem;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* =========================================
+     ENHANCED MODE
+  ========================================= */
+
+  .testimonial-section.is-enhanced {
+    min-height: var(--testimonial-canvas-height, 100svh);
+
+    height: var(--testimonial-canvas-height, 100svh);
+  }
+
+  .testimonial-section.is-enhanced .testimonial-stage {
+    position: absolute;
+
+    inset: 0;
+
+    min-height: 0;
+    height: 100%;
+
+    overflow: hidden;
+
+    padding: 0;
+
+    perspective: 1500px;
+
+    transform-style: preserve-3d;
+
+    touch-action: pan-y;
+
+    outline: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .testimonial-section.is-enhanced .testimonial-stage.is-dragging {
+    cursor: grabbing;
+  }
+
+  .testimonial-section.is-enhanced .testimonial-list {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    padding: 0;
+  }
+
+  .testimonial-section.is-enhanced .testimonial-card {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    margin: 0;
+  }
+
+  /* =========================================
+     CONTROLS
+  ========================================= */
+
+  .testimonial-controls {
+    display: none;
+  }
+
+  .testimonial-section.is-enhanced .testimonial-controls {
+    position: absolute;
+
+    /*
+   * O card também está centralizado em 50%.
+   *
+   * min(69.333vw, 275.556px)
+   * corresponde a metade da altura
+   * de um card:
+   *
+   * largura = min(78vw, 310px)
+   * aspect = 9 / 16
+   *
+   * metade da altura =
+   * largura * 8 / 9
+   */
+
+    top: calc(50% + min(69.333vw, 275.556px) + 1rem);
+
+    bottom: auto;
+
+    left: clamp(1.25rem, 4vw, 3.5rem);
+
+    z-index: 20;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.75rem;
+  }
+
+  .testimonial-button {
+    display: grid;
+
+    width: 44px;
+    height: 44px;
+
+    place-items: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(246, 244, 240, 0.23);
+
+    border-radius: 50%;
+
+    background: rgba(15, 15, 15, 0.06);
+
+    color: rgba(246, 244, 240, 0.92);
+
+    cursor: pointer;
+
+    transition:
+      border-color var(--duration-fast) ease,
+      background-color var(--duration-fast) ease,
+      opacity var(--duration-fast) ease;
+  }
+
+  .testimonial-button svg {
+    width: 17px;
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.25;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+  }
+
+  .testimonial-button:disabled {
+    opacity: 0.17;
+
+    cursor: default;
+  }
+
+  .testimonial-button:focus-visible {
+    outline: 2px solid var(--color-gold);
+
+    outline-offset: 4px;
+  }
+
+  /* =========================================
+     SMALL / SHORT MOBILE
+  ========================================= */
+
+  @media (max-width: 23.75rem) {
+    .testimonial-card {
+      width: min(80vw, 290px);
+    }
+
+    .testimonial-card-content {
+      padding: 1.5rem 1.45rem 1.7rem;
+    }
+
+    .testimonial-section.is-enhanced .testimonial-controls {
+      top: calc(50% + min(69.333vw, 275.556px) + 0.55rem);
+    }
+  }
+
+  /* =========================================
+     DESKTOP
+  ========================================= */
+
+  @media (min-width: 48rem) {
+    .testimonial-section {
+      min-height: 100dvh;
+    }
+
+    .testimonial-list {
+      min-height: 100dvh;
+    }
+
+    .testimonial-section.is-enhanced {
+      height: 100dvh;
+    }
+
+    .testimonial-card {
+      width: min(26vw, 470px);
+
+      aspect-ratio: 3 / 4;
+
+      border-radius: 34px;
+    }
+
+    .testimonial-card-content {
+      padding: 2.45rem 2.45rem 2.75rem;
+    }
+
+    .testimonial-number {
+      left: 2.45rem;
+      bottom: 2.35rem;
+      font-size: 0.64rem;
+    }
+
+    .testimonial-copy {
+      max-width: 24rem;
+      gap: 1.35rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .testimonial-text {
+      max-width: 24rem;
+      font-size: clamp(0.8rem, 0.88vw, 0.92rem);
+      line-height: 1.72;
+    }
+
+    .testimonial-name {
+      font-size: clamp(1.8rem, 1.65vw, 2.15rem);
+    }
+
+    .testimonial-role {
+      margin-top: 0.45rem;
+      font-size: 0.56rem;
+    }
+
+    .testimonial-section.is-enhanced .testimonial-controls {
+      top: auto;
+
+      left: clamp(2.5rem, 3vw, 4rem);
+
+      bottom: clamp(2.5rem, 5dvh, 4rem);
+
+      gap: 1rem;
+    }
+
+    .testimonial-button {
+      width: 68px;
+      height: 68px;
+    }
+
+    .testimonial-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .testimonial-button:hover:not(:disabled) {
+      border-color: rgba(246, 244, 240, 0.82);
+
+      background: rgba(246, 244, 240, 0.04);
+    }
+
+    .testimonial-bottom-transition {
+      height: 28dvh;
+    }
+  }
+
+  @media (min-width: 93.75rem) {
+    .testimonial-card {
+      width: min(25vw, 500px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-button {
+      transition: none;
+    }
+  }
+</style>

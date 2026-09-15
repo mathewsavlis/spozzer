@@ -1,0 +1,191 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const whatsappNumber =
+  import.meta.env.PUBLIC_WHATSAPP_NUMBER;
+---
+
+<BaseLayout
+  title="Cadastro concluído | Sthefani Pozzer"
+  description="Seu projeto foi registrado."
+>
+
+  <main class="thank-you">
+
+    <div class="thank-you__content">
+
+      <p class="thank-you__eyebrow">
+        CADASTRO CONCLUÍDO
+      </p>
+
+      <h1 class="thank-you__title type-display">
+        Vamos continuar pelo WhatsApp.
+      </h1>
+
+      <p class="thank-you__description">
+        Seu projeto já foi registrado.
+        Agora podemos continuar a conversa
+        diretamente pelo WhatsApp.
+      </p>
+
+      <a
+        href="#"
+        class="thank-you__button"
+        data-whatsapp-link
+      >
+        CONTINUAR NO WHATSAPP
+      </a>
+
+    </div>
+
+  </main>
+
+
+  <script define:vars={{ whatsappNumber }}>
+
+    const link =
+      document.querySelector(
+        "[data-whatsapp-link]"
+      );
+
+
+    if (
+      whatsappNumber &&
+      link instanceof HTMLAnchorElement
+    ) {
+
+      const phone =
+        whatsappNumber.replace(
+          /\D/g,
+          ""
+        );
+
+
+      const message =
+        [
+          "Olá, Sthefani.",
+          "",
+          "Acabei de preencher o formulário pelo site e gostaria de continuar meu atendimento.",
+        ].join("\n");
+
+
+      const url =
+        `https://wa.me/${phone}?text=${
+          encodeURIComponent(message)
+        }`;
+
+
+      link.href = url;
+
+
+      window.setTimeout(
+        () => {
+
+          window.location.assign(
+            url
+          );
+
+        },
+        1200
+      );
+
+    }
+
+  </script>
+
+</BaseLayout>
+
+
+<style>
+
+  .thank-you {
+    display: grid;
+
+    min-height: 100svh;
+
+    place-items: center;
+
+    padding: 2rem;
+
+    background:
+      var(--color-deep);
+
+    color:
+      var(--color-light);
+  }
+
+
+  .thank-you__content {
+    display: grid;
+
+    width: 100%;
+    max-width: 38rem;
+
+    justify-items: center;
+
+    gap: 1.5rem;
+
+    text-align: center;
+  }
+
+
+  .thank-you__eyebrow {
+    color:
+      var(--color-gold);
+
+    font-family:
+      var(--font-sans);
+
+    font-size: 0.65rem;
+
+    letter-spacing: 0.25em;
+  }
+
+
+  .thank-you__title {
+    max-width: 12ch;
+
+    font-size:
+      clamp(
+        2.4rem,
+        8vw,
+        4.5rem
+      );
+
+    line-height: 0.92;
+  }
+
+
+  .thank-you__description {
+    max-width: 30rem;
+
+    color:
+      rgba(
+        246,
+        244,
+        240,
+        0.65
+      );
+
+    line-height: 1.8;
+  }
+
+
+  .thank-you__button {
+    margin-top: 1rem;
+
+    padding-bottom: 0.8rem;
+
+    border-bottom:
+      1px solid
+      var(--color-gold);
+
+    font-family:
+      var(--font-sans);
+
+    font-size: 0.65rem;
+
+    letter-spacing: 0.2em;
+  }
+
+</style>

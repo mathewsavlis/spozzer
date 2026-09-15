@@ -1,0 +1,232 @@
+---
+import { servicesIntro } from "../data/servicesData.js";
+
+const words = servicesIntro.description.split(/\s+/).filter(Boolean);
+---
+
+<section
+  id="servicos"
+  class="service"
+  data-service
+  aria-labelledby="service-title"
+>
+  <div class="service__ambient" aria-hidden="true"></div>
+
+  <div class="service__content">
+    <div class="service__eyebrow-mask">
+      <p class="service__eyebrow type-eyebrow" data-service-eyebrow>
+        {servicesIntro.eyebrow}
+      </p>
+    </div>
+
+    <div class="service__title-mask">
+      <h2 id="service-title" class="service__title type-display">
+        <span class="service__title-line" data-service-title-line>
+          {servicesIntro.title.firstLine}
+        </span>
+
+        <span
+          class="service__title-line service__title-accent"
+          data-service-title-line
+        >
+          {servicesIntro.title.secondLine}
+        </span>
+      </h2>
+    </div>
+
+    <!--
+      Texto visual fragmentado para GSAP.
+      O conteúdo completo permanece disponível
+      semanticamente logo abaixo.
+    -->
+
+    <p class="service__description type-body" aria-hidden="true">
+      {
+        words.map((word) => (
+          <span class="service__word" data-service-word>
+            {word}
+          </span>
+        ))
+      }
+    </p>
+
+    <p class="visually-hidden">
+      {servicesIntro.description}
+    </p>
+  </div>
+</section>
+
+<style>
+  .service {
+    position: relative;
+
+    display: flex;
+
+    width: 100%;
+    min-height: var(--service-canvas-height, 100svh);
+
+    height: var(--service-canvas-height, 100svh);
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    padding: 4rem var(--page-inline);
+
+    background: var(--color-deep);
+
+    color: var(--color-light);
+
+    isolation: isolate;
+  }
+
+  .service__ambient {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 0;
+
+    width: min(56.25rem, 110vw);
+
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background: radial-gradient(
+      circle,
+      rgba(197, 160, 89, 0.045),
+      transparent 68%
+    );
+
+    translate: -50% -50%;
+
+    pointer-events: none;
+  }
+
+  .service__content {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    width: 100%;
+
+    max-width: 58rem;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    margin-inline: auto;
+
+    text-align: center;
+  }
+
+
+  .service__eyebrow-mask {
+    overflow: hidden;
+
+    margin-bottom: clamp(1.4rem, 4svh, 1.9rem);
+  }
+
+  .service__title-mask {
+    overflow: hidden;
+
+    padding: 0.08em 0 0.16em;
+  }
+
+  .service__title {
+    max-width: 52rem;
+
+    color: rgba(246, 244, 240, 0.96);
+
+    font-size: clamp(3rem, 11vw, 4.2rem);
+
+    line-height: 0.9;
+
+    text-wrap: balance;
+  }
+
+  .service__title-line {
+    display: block;
+  }
+
+  .service__title-accent {
+    margin-top: 0.08em;
+
+    color: rgba(246, 244, 240, 0.96);
+
+    font-style: normal;
+  }
+
+  .service__description {
+    width: calc(100% - (var(--copy-gutter) * 2));
+
+    max-width: 22rem;
+
+    margin: 3.25rem auto 0;
+
+    color: rgba(246, 244, 240, 0.58);
+
+    font-size: clamp(0.75rem, 2.9vw, 0.84rem);
+
+    line-height: 1.95;
+
+    letter-spacing: 0.01em;
+
+    text-align: center;
+  }
+
+  .service__word {
+    display: inline-block;
+
+    margin-right: 0.26em;
+  }
+
+  @media (min-width: 48rem) {
+    .service {
+      height: 100dvh;
+      min-height: 100dvh;
+
+      padding-block: 6rem;
+    }
+
+    .service__eyebrow-mask {
+      margin-bottom: 2rem;
+    }
+
+    .service__title {
+      font-size: clamp(4.5rem, 5.4vw, 6.25rem);
+
+      line-height: 0.89;
+    }
+
+    .service__description {
+      max-width: 34rem;
+
+      margin-top: 3.9rem;
+
+      font-size: clamp(0.8rem, 0.9vw, 0.92rem);
+    }
+  }
+
+  @media (min-width: 48rem) and (max-height: 42.5rem) {
+    .service {
+      padding-block: 3rem;
+    }
+
+    .service__eyebrow-mask {
+      margin-bottom: 1.2rem;
+    }
+
+    .service__description {
+      margin-top: 1.8rem;
+
+      line-height: 1.7;
+    }
+  }
+</style>
