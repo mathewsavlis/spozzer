@@ -14,6 +14,8 @@ export const heroData = {
   },
 
   media: {
+    poster: "/assets/imgs/hero-poster.webp",
+    mobileMp4: "/assets/videos/hero-mobile.mp4",
     mobile: "/assets/videos/hero-mobile.webm",
     desktop: "/assets/videos/hero-pc.webm",
   },

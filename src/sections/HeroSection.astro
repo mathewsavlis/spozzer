@@ -18,6 +18,17 @@ const totalItems = portfolioItems.length;
 
   <div class="hero-intro">
     <div class="hero-media" aria-hidden="true">
+      <img
+        class="hero-poster"
+        src={assetPath(heroData.media.poster)}
+        alt=""
+        width="720"
+        height="1280"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+
       <video
         class="hero-video"
         data-hero-video
@@ -26,9 +37,16 @@ const totalItems = portfolioItems.length;
         loop
         playsinline
         webkit-playsinline
-        preload="metadata"
+        preload="auto"
         disablepictureinpicture
+        disableRemotePlayback
       >
+        <source
+          src={assetPath(heroData.media.mobileMp4)}
+          type="video/mp4"
+          media="(max-width: 47.999rem)"
+        />
+
         <source
           src={assetPath(heroData.media.desktop)}
           type="video/webm"
@@ -225,7 +243,12 @@ const totalItems = portfolioItems.length;
     background: var(--color-deep);
   }
 
+  .hero-poster,
   .hero-video {
+    position: absolute;
+
+    inset: 0;
+
     display: block;
 
     width: 100%;
@@ -233,8 +256,39 @@ const totalItems = portfolioItems.length;
     height: 100%;
 
     object-fit: cover;
+  }
+
+  .hero-poster {
+    z-index: 0;
+
+    opacity: 1;
+
+    transition: opacity 220ms ease;
+  }
+
+  .hero-video {
+    z-index: 1;
+
+    opacity: 0;
 
     pointer-events: none;
+
+    transition: opacity 220ms ease;
+  }
+
+  .hero-media.is-video-playing .hero-video {
+    opacity: 1;
+  }
+
+  .hero-media.is-video-playing .hero-poster {
+    opacity: 0;
+  }
+
+  .hero-video::-webkit-media-controls,
+  .hero-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+
+    -webkit-appearance: none;
   }
 
   .hero-overlay {
@@ -1016,6 +1070,10 @@ const totalItems = portfolioItems.length;
      ========================================= */
 
   @media (max-width: 47.999rem) {
+    .portfolio-card__surface {
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+    }
+
     .hero-stage.is-enhanced .hero-media {
       position: absolute;
 
@@ -1045,8 +1103,8 @@ const totalItems = portfolioItems.length;
      */
 
     /* =========================================
-   MOBILE PORTFOLIO GLASS
-   ========================================= */
+       MOBILE PORTFOLIO GLASS
+       ========================================= */
 
     .hero-stage.is-enhanced .portfolio-header {
       display: grid;
@@ -1070,15 +1128,15 @@ const totalItems = portfolioItems.length;
       box-sizing: border-box;
 
       /*
-   * IMPORTANTE:
-   *
-   * O header em si não possui
-   * absolutamente nenhum vidro.
-   *
-   * Isso elimina o retângulo visível
-   * durante a subida e a hairline
-   * na posição final.
-   */
+       * IMPORTANTE:
+       *
+       * O header em si não possui
+       * absolutamente nenhum vidro.
+       *
+       * Isso elimina o retângulo visível
+       * durante a subida e a hairline
+       * na posição final.
+       */
 
       background: transparent;
 
@@ -1092,20 +1150,20 @@ const totalItems = portfolioItems.length;
     }
 
     /* =========================================
-   GLASS LAYER
-   ========================================= */
+       GLASS LAYER
+       ========================================= */
 
     .hero-stage.is-enhanced .portfolio-header__glass {
       position: absolute;
 
       /*
-   * Passa alguns pixels dos limites
-   * geométricos do header.
-   *
-   * Isso evita seam/hairline causada
-   * por arredondamento de subpixel
-   * no Safari.
-   */
+       * Passa alguns pixels dos limites
+       * geométricos do header.
+       *
+       * Isso evita seam/hairline causada
+       * por arredondamento de subpixel
+       * no Safari.
+       */
 
       top: -2px;
 
@@ -1122,9 +1180,9 @@ const totalItems = portfolioItems.length;
       pointer-events: none;
 
       /*
-   * Cor também desaparece
-   * progressivamente.
-   */
+       * Cor também desaparece
+       * progressivamente.
+       */
 
       background: linear-gradient(
         to bottom,
@@ -1145,29 +1203,29 @@ const totalItems = portfolioItems.length;
       );
 
       /*
-   * Blur principal.
-   *
-   * Existe apenas nessa camada.
-   */
+       * Blur principal.
+       *
+       * Existe apenas nessa camada.
+       */
 
-      -webkit-backdrop-filter: blur(18px) saturate(0.88);
+      -webkit-backdrop-filter: blur(7px) saturate(0.94);
 
-      backdrop-filter: blur(18px) saturate(0.88);
+      backdrop-filter: blur(7px) saturate(0.94);
 
       /*
-   * MÁSCARA DO VIDRO
-   *
-   * 0 -> 8%
-   * faz um feather extremamente curto
-   * na borda superior.
-   *
-   * Isso é o que impede enxergar
-   * a caixa enquanto ela sobe.
-   *
-   * Depois o vidro chega rapidamente
-   * à força máxima e desaparece
-   * gradualmente até o final.
-   */
+       * MÁSCARA DO VIDRO
+       *
+       * 0 -> 8%
+       * faz um feather extremamente curto
+       * na borda superior.
+       *
+       * Isso é o que impede enxergar
+       * a caixa enquanto ela sobe.
+       *
+       * Depois o vidro chega rapidamente
+       * à força máxima e desaparece
+       * gradualmente até o final.
+       */
 
       -webkit-mask-image: linear-gradient(
         to bottom,
@@ -1211,8 +1269,8 @@ const totalItems = portfolioItems.length;
     }
 
     /* =========================================
-   PORTFOLIO COPY
-   ========================================= */
+       PORTFOLIO COPY
+       ========================================= */
 
     .hero-stage.is-enhanced .portfolio-header__inner {
       position: relative;

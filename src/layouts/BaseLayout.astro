@@ -28,6 +28,18 @@ const {
     <meta name="description" content={description} />
     <meta name="theme-color" content="#090909" />
 
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+
+        root.classList.add("js");
+
+        window.__BYSP_BOOT_FALLBACK__ = window.setTimeout(() => {
+          root.classList.add("js-fallback");
+        }, 3500);
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link

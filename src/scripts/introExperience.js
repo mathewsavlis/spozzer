@@ -61,6 +61,45 @@ function initStableIntroViewport(
 
 
   /*
+   * A geometria estável vem do small viewport
+   * do CSS, não do visualViewport transitório.
+   * Isso evita uma captura errada enquanto
+   * a toolbar do Safari ainda está assentando.
+   */
+  const getStableViewportHeight =
+    () => {
+      if (
+        !window.CSS?.supports?.(
+          "height",
+          "100svh"
+        )
+      ) {
+        return getViewportHeight();
+      }
+
+      const probe =
+        document.createElement("div");
+
+      probe.style.cssText =
+        "position:fixed;inset:0 auto auto 0;width:1px;height:100svh;visibility:hidden;pointer-events:none;contain:strict;";
+
+      document.documentElement
+        .appendChild(probe);
+
+      const height = Math.round(
+        probe.getBoundingClientRect()
+          .height
+      );
+
+      probe.remove();
+
+      return height > 0
+        ? height
+        : getViewportHeight();
+    };
+
+
+  /*
    * =========================================
    * CLEAR
    * =========================================
@@ -156,7 +195,7 @@ function initStableIntroViewport(
 
 
       stableHeight =
-        getViewportHeight();
+        getStableViewportHeight();
 
 
       master.style.setProperty(
@@ -338,6 +377,34 @@ function initHeroVideoPlayback(
     false;
 
 
+  const media =
+    video.closest(
+      ".hero-media"
+    );
+
+
+  const markPlaying =
+    () => {
+      video.dataset.playback =
+        "playing";
+
+      media?.classList.add(
+        "is-video-playing"
+      );
+    };
+
+
+  const markBlocked =
+    () => {
+      video.dataset.playback =
+        "blocked";
+
+      media?.classList.remove(
+        "is-video-playing"
+      );
+    };
+
+
   /*
    * Reforçamos os requisitos
    * de autoplay também via JS.
@@ -357,6 +424,29 @@ function initHeroVideoPlayback(
 
   video.defaultMuted =
     true;
+
+
+  video.controls =
+    false;
+
+
+  video.disablePictureInPicture =
+    true;
+
+
+  video.removeAttribute(
+    "controls"
+  );
+
+
+  video.setAttribute(
+    "disableRemotePlayback",
+    ""
+  );
+
+
+  video.dataset.playback =
+    "pending";
 
 
   video.playsInline =
@@ -395,8 +485,7 @@ function initHeroVideoPlayback(
         !video.paused &&
         !video.ended
       ) {
-        video.dataset.playback =
-          "playing";
+        markPlaying();
 
 
         return true;
@@ -407,8 +496,7 @@ function initHeroVideoPlayback(
         await video.play();
 
 
-        video.dataset.playback =
-          "playing";
+        markPlaying();
 
 
         return true;
@@ -421,8 +509,7 @@ function initHeroVideoPlayback(
          * oportunidade legítima.
          */
 
-        video.dataset.playback =
-          "blocked";
+        markBlocked();
 
 
         return false;
@@ -461,6 +548,12 @@ function initHeroVideoPlayback(
   const handleCanPlay =
     () => {
       attemptPlay();
+    };
+
+
+  const handlePlaying =
+    () => {
+      markPlaying();
     };
 
 
@@ -528,6 +621,12 @@ function initHeroVideoPlayback(
   );
 
 
+  video.addEventListener(
+    "playing",
+    handlePlaying
+  );
+
+
   attemptPlay();
 
 
@@ -573,6 +672,17 @@ function initHeroVideoPlayback(
     video.removeEventListener(
       "canplay",
       handleCanPlay
+    );
+
+
+    video.removeEventListener(
+      "playing",
+      handlePlaying
+    );
+
+
+    media?.classList.remove(
+      "is-video-playing"
     );
 
 
@@ -1040,6 +1150,12 @@ export function initIntroExperience() {
     };
 
 
+  const isMobile =
+    window.matchMedia(
+      MOBILE_QUERY
+    ).matches;
+
+
   /*
    * =========================================
    * GSAP CONTEXT
@@ -1219,28 +1335,81 @@ export function initIntroExperience() {
          * Continua independente do scroll.
          */
 
-        gsap.to(
-          heroItems,
-          {
-            autoAlpha:
-              1,
+        const heroEntrance =
+          gsap.to(
+            heroItems,
+            {
+              autoAlpha:
+                1,
 
-            y:
-              0,
+              y:
+                0,
 
-            clipPath:
-              "inset(0% 0% 0% 0%)",
+              clipPath:
+                "inset(0% 0% 0% 0%)",
 
-            duration:
-              1.2,
+              duration:
+                1.2,
 
-            stagger:
-              0.15,
+              stagger:
+                0.15,
 
-            ease:
-              "power2.out",
-          }
-        );
+              ease:
+                "power2.out",
+
+              paused:
+                true,
+            }
+          );
+
+
+        let heroEntranceStarted =
+          false;
+
+
+        const startHeroEntrance =
+          () => {
+            if (
+              heroEntranceStarted
+            ) {
+              return;
+            }
+
+            heroEntranceStarted =
+              true;
+
+            fontFallback.kill();
+
+            heroEntrance.play(0);
+          };
+
+
+        const fontFallback =
+          gsap.delayedCall(
+            1.6,
+            startHeroEntrance
+          );
+
+
+        if (
+          document.fonts?.load
+        ) {
+          Promise.allSettled([
+            document.fonts.load(
+              '300 1rem "Cormorant Garamond"'
+            ),
+            document.fonts.load(
+              '400 1rem "Italianno"'
+            ),
+            document.fonts.load(
+              '300 1rem "Montserrat"'
+            ),
+          ]).then(
+            startHeroEntrance
+          );
+        } else {
+          startHeroEntrance();
+        }
 
 
         /*
@@ -1407,34 +1576,45 @@ export function initIntroExperience() {
         );
 
         /*
- * =====================================
- * PROFUNDIDADE DO PORTFOLIO
- * =====================================
- *
- * Quando o título do Portfolio começa
- * a aparecer:
- *
- * 1. o vídeo perde nitidez;
- * 2. o fundo escurece levemente;
- * 3. esse estado permanece até
- *    o Hero sair da tela.
- */
+         * =====================================
+         * PROFUNDIDADE DO PORTFOLIO
+         * =====================================
+         *
+         * Quando o título do Portfolio começa
+         * a aparecer:
+         *
+         * 1. o vídeo perde nitidez;
+         * 2. o fundo escurece levemente;
+         * 3. esse estado permanece até
+         *    o Hero sair da tela.
+         */
 
         timeline.to(
           heroVideo,
-          {
-            filter:
-              "blur(7px)",
+          isMobile
+            ? {
+                scale:
+                  1.012,
 
-            scale:
-              1.025,
+                duration:
+                  1,
 
-            duration:
-              1,
+                ease:
+                  "power2.inOut",
+              }
+            : {
+                filter:
+                  "blur(7px)",
 
-            ease:
-              "power2.inOut",
-          },
+                scale:
+                  1.025,
+
+                duration:
+                  1,
+
+                ease:
+                  "power2.inOut",
+              },
 
           "portfolioReveal"
         );
@@ -1754,6 +1934,16 @@ export function initIntroExperience() {
               "power1.inOut",
           },
 
+          "aboutPhotoSwap"
+        );
+
+
+        timeline.set(
+          aboutItems,
+          {
+            willChange:
+              "auto",
+          },
           "aboutPhotoSwap"
         );
       },
