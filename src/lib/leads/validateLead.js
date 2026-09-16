@@ -46,15 +46,6 @@ export function validateLead(
 
   }
 
-
-  if (!data.projectType) {
-
-    errors.projectType =
-      "Selecione o tipo de projeto.";
-
-  }
-
-
   const phone =
     normalizePhone(
       data.phone

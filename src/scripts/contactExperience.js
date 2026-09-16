@@ -420,13 +420,6 @@ export function initContactExperience() {
             ) ?? ""
           ),
 
-        projectType:
-          String(
-            formData.get(
-              "projectType"
-            ) ?? ""
-          ),
-
         phone:
           String(
             formData.get(
