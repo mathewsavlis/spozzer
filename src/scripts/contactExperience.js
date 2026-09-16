@@ -8,6 +8,9 @@ import {
   submitLead,
 } from "../lib/leads/submitLead.js";
 
+import { getAttribution }
+  from "../lib/leads/attribution.js";
+
 
 const MOBILE_QUERY =
   "(max-width: 47.999rem)";
@@ -29,7 +32,7 @@ export function initContactExperience() {
   if (
     !(section instanceof HTMLElement)
   ) {
-    return () => {};
+    return () => { };
   }
 
 
@@ -61,7 +64,7 @@ export function initContactExperience() {
       HTMLButtonElement
     )
   ) {
-    return () => {};
+    return () => { };
   }
 
 
@@ -474,10 +477,19 @@ export function initContactExperience() {
 
 
       try {
+        const attribution =
+          getAttribution();
+
         const result =
-          await submitLead(
-            validation.normalized
-          );
+          await submitLead({
+            ...validation.normalized,
+
+            form_name:
+              form.name ||
+              "form_sthefani_pozzer",
+
+            ...attribution,
+          });
 
 
         setState(
@@ -494,7 +506,7 @@ export function initContactExperience() {
         if (
           error.fields &&
           typeof error.fields ===
-            "object"
+          "object"
         ) {
           showErrors(
             error.fields
@@ -523,7 +535,7 @@ export function initContactExperience() {
    */
 
   let motionCleanup =
-    () => {};
+    () => { };
 
 
   if (
