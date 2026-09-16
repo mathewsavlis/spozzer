@@ -18,39 +18,127 @@ const {
 ---
 
 <!doctype html>
+
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- =========================================
+         GOOGLE TAG MANAGER
+         ========================================= -->
+
+    <script is:inline>
+      (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+
+        w[l].push({
+          "gtm.start": new Date().getTime(),
+          event: "gtm.js"
+        });
+
+        var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),
+            dl=l!="dataLayer" ? "&l="+l : "";
+
+        j.async=true;
+
+        j.src=
+          "https://www.googletagmanager.com/gtm.js?id="+i+dl;
+
+        f.parentNode.insertBefore(j,f);
+
+      })(window,document,"script","dataLayer","GTM-PLDHFWZ2");
+    </script>
+
+    <!-- End Google Tag Manager -->
+
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <meta name="description" content={description} />
-    <meta name="theme-color" content="#090909" />
+
+    <meta
+      name="description"
+      content={description}
+    />
+
+    <meta
+      name="theme-color"
+      content="#090909"
+    />
+
+
+    <!-- =========================================
+         BOOT GUARD
+         ========================================= -->
 
     <script is:inline>
       (() => {
-        const root = document.documentElement;
+        const root =
+          document.documentElement;
 
-        root.classList.add("js");
+        root.classList.add(
+          "js"
+        );
 
-        window.__BYSP_BOOT_FALLBACK__ = window.setTimeout(() => {
-          root.classList.add("js-fallback");
-        }, 3500);
+        window.__BYSP_BOOT_FALLBACK__ =
+          window.setTimeout(
+            () => {
+              root.classList.add(
+                "js-fallback"
+              );
+            },
+            3500
+          );
       })();
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+
+    <!-- =========================================
+         FONTS
+         ========================================= -->
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Italianno&display=swap"
       rel="stylesheet"
     />
 
-    <title>{title}</title>
+
+    <title>
+      {title}
+    </title>
   </head>
 
+
   <body>
+    <!-- =========================================
+         GOOGLE TAG MANAGER — NOSCRIPT
+         ========================================= -->
+
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PLDHFWZ2"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe>
+    </noscript>
+
+    <!-- End Google Tag Manager -->
+
+
     <slot />
   </body>
 </html>
