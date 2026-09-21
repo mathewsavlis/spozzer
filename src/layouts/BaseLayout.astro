@@ -140,5 +140,43 @@ const {
 
 
     <slot />
+
+    <!-- =========================================
+         AVISO DE PRIVACIDADE
+         =========================================
+
+         Nota mínima: este site coleta dados de
+         navegação (visitas, tempo de permanência,
+         interação com as seções) para melhorar a
+         experiência e a performance de marketing.
+    -->
+
+    <p class="privacy-notice">
+      Este site coleta dados de navegação (visitas, tempo de permanência,
+      interação com as seções) para melhorar a experiência e o desempenho
+      das campanhas. Ao continuar navegando, você concorda com essa coleta.
+    </p>
   </body>
 </html>
+
+<style>
+  .privacy-notice {
+    max-width: 42rem;
+
+    margin: 0 auto;
+
+    padding: 1.25rem var(--page-inline, 1.5rem) 2rem;
+
+    color: rgba(42, 42, 42, 0.5);
+
+    font-family: var(--font-sans);
+
+    font-size: 0.62rem;
+
+    line-height: 1.6;
+
+    text-align: center;
+
+    background: var(--color-light);
+  }
+</style>

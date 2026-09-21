@@ -32,6 +32,7 @@ const whatsappNumber =
         href="#"
         class="thank-you__button"
         data-whatsapp-link
+        data-whatsapp-number={whatsappNumber}
       >
         CONTINUAR NO WHATSAPP
       </a>
@@ -41,7 +42,11 @@ const whatsappNumber =
   </main>
 
 
-  <script define:vars={{ whatsappNumber }}>
+  <script>
+
+    import { sendWhatsappClickEvent }
+      from "../lib/analytics/session.js";
+
 
     const link =
       document.querySelector(
@@ -50,44 +55,87 @@ const whatsappNumber =
 
 
     if (
-      whatsappNumber &&
       link instanceof HTMLAnchorElement
     ) {
 
-      const phone =
-        whatsappNumber.replace(
-          /\D/g,
-          ""
+      const whatsappNumber =
+        link.dataset
+          .whatsappNumber;
+
+
+      if (whatsappNumber) {
+
+        const phone =
+          whatsappNumber.replace(
+            /\D/g,
+            ""
+          );
+
+
+        const message =
+          [
+            "Olá, Sthefani.",
+            "",
+            "Acabei de preencher o formulário pelo site e gostaria de continuar meu atendimento.",
+          ].join("\n");
+
+
+        const url =
+          `https://wa.me/${phone}?text=${
+            encodeURIComponent(message)
+          }`;
+
+
+        link.href = url;
+
+
+        /*
+         * =========================================
+         * ANALYTICS — CLIQUE NO WHATSAPP
+         * =========================================
+         *
+         * Dois caminhos reais levam pro WhatsApp
+         * aqui: o redirecionamento automático (abaixo)
+         * e o clique manual no link, caso o automático
+         * não dispare por qualquer motivo. Os dois usam
+         * a mesma `url` — uma única chamada guardada
+         * cobre ambos, sem duplicar o evento.
+         */
+
+        let clickTracked =
+          false;
+
+        const trackClickOnce =
+          () => {
+
+            if (clickTracked) return;
+            clickTracked = true;
+
+            sendWhatsappClickEvent();
+
+          };
+
+
+        link.addEventListener(
+          "click",
+          trackClickOnce
         );
 
 
-      const message =
-        [
-          "Olá, Sthefani.",
-          "",
-          "Acabei de preencher o formulário pelo site e gostaria de continuar meu atendimento.",
-        ].join("\n");
+        window.setTimeout(
+          () => {
 
+            trackClickOnce();
 
-      const url =
-        `https://wa.me/${phone}?text=${
-          encodeURIComponent(message)
-        }`;
+            window.location.assign(
+              url
+            );
 
+          },
+          1200
+        );
 
-      link.href = url;
-
-
-      window.setTimeout(
-        () => {
-
-          window.location.assign(
-            url
-          );
-
-        },
-        1200
-      );
+      }
 
     }
 

@@ -11,6 +11,9 @@ import {
 import { getAttribution }
   from "../lib/leads/attribution.js";
 
+import { getVisitorId }
+  from "../lib/analytics/visitorId.js";
+
 
 const MOBILE_QUERY =
   "(max-width: 47.999rem)";
@@ -22,7 +25,9 @@ const REDUCED_MOTION_QUERY =
   "(prefers-reduced-motion: reduce)";
 
 
-export function initContactExperience() {
+export function initContactExperience({
+  onFormSubmitted,
+} = {}) {
   const section =
     document.querySelector(
       "[data-contact]"
@@ -489,6 +494,9 @@ export function initContactExperience() {
               "form_sthefani_pozzer",
 
             ...attribution,
+
+            visitorId:
+              getVisitorId(),
           });
 
 
@@ -497,6 +505,8 @@ export function initContactExperience() {
           "Cadastro concluído."
         );
 
+
+        onFormSubmitted?.();
 
         window.location.assign(
           result.redirectUrl ||
