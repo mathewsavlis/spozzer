@@ -1,4 +1,5 @@
 import { initIntroExperience } from "./introExperience.js";
+import { initSessionTracking } from "../lib/analytics/session.js";
 
 const CLEANUP_KEY = "__byspozzerPageAnimationsCleanup";
 
@@ -37,6 +38,21 @@ export function initPageAnimations() {
   let destroyed = false;
   let secondaryTaskId = null;
   let secondaryTaskType = null;
+
+  /*
+   * =========================================
+   * VISITOR ANALYTICS
+   * =========================================
+   *
+   * Início cedo (não espera as experiências
+   * secundárias) para que as seções sejam
+   * observadas o quanto antes — engajamento
+   * logo no início da visita não pode ficar
+   * de fora da contagem.
+   */
+
+  const { markFormSubmitted } =
+    initSessionTracking();
 
   /*
    * =========================================
@@ -104,7 +120,10 @@ export function initPageAnimations() {
           processModule
             .initProcessExperience(),
           contactModule
-            .initContactExperience()
+            .initContactExperience({
+              onFormSubmitted:
+                markFormSubmitted,
+            })
         );
       } catch (error) {
         /*
