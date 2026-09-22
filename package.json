@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/italianno": "^5.3.0",
     "@fontsource/montserrat": "^5.3.0",
     "astro": "^7.3.2",
     "gsap": "^3.15.0"
