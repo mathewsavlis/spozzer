@@ -1,3 +1,5 @@
+import { hasAcceptedConsent } from "../consent/cookieConsent.js";
+
 const STORAGE_KEY =
   "spozzer_visitor_id";
 
@@ -49,7 +51,16 @@ function createVisitorId() {
 let cachedVisitorId = null;
 
 
+/*
+ * Retorna null sem consentimento aceito — nunca cria nem lê o id
+ * persistido nesse caso, então nenhum identificador de navegador chega
+ * a existir antes da pessoa aceitar.
+ */
 export function getVisitorId() {
+  if (!hasAcceptedConsent()) {
+    return null;
+  }
+
   if (cachedVisitorId) {
     return cachedVisitorId;
   }

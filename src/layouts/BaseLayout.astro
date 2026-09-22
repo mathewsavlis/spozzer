@@ -25,29 +25,49 @@ const {
 
     <!-- =========================================
          GOOGLE TAG MANAGER
-         ========================================= -->
+         =========================================
+
+         Só carrega com consentimento aceito (ver
+         o banner no final do <body> e
+         lib/consent/cookieConsent.js). Sem
+         decisão ainda, ou recusado: esta função
+         fica definida mas nunca é chamada aqui —
+         o clique em "Aceitar" a chama diretamente.
+    -->
 
     <script is:inline>
-      (function(w,d,s,l,i){
-        w[l]=w[l]||[];
+      function bysLoadGtm() {
+        (function(w,d,s,l,i){
+          w[l]=w[l]||[];
 
-        w[l].push({
-          "gtm.start": new Date().getTime(),
-          event: "gtm.js"
-        });
+          w[l].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
+          });
 
-        var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),
-            dl=l!="dataLayer" ? "&l="+l : "";
+          var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),
+              dl=l!="dataLayer" ? "&l="+l : "";
 
-        j.async=true;
+          j.async=true;
 
-        j.src=
-          "https://www.googletagmanager.com/gtm.js?id="+i+dl;
+          j.src=
+            "https://www.googletagmanager.com/gtm.js?id="+i+dl;
 
-        f.parentNode.insertBefore(j,f);
+          f.parentNode.insertBefore(j,f);
 
-      })(window,document,"script","dataLayer","GTM-PLDHFWZ2");
+        })(window,document,"script","dataLayer","GTM-PLDHFWZ2");
+      }
+
+      window.__bysLoadGtm = bysLoadGtm;
+
+      try {
+        if (
+          localStorage.getItem("spozzer_cookie_consent") === "accepted"
+        ) {
+          bysLoadGtm();
+        }
+      } catch {}
     </script>
 
     <!-- End Google Tag Manager -->
@@ -123,60 +143,201 @@ const {
 
 
   <body>
-    <!-- =========================================
-         GOOGLE TAG MANAGER — NOSCRIPT
-         ========================================= -->
-
-    <noscript>
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-PLDHFWZ2"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe>
-    </noscript>
-
-    <!-- End Google Tag Manager -->
-
+    <!--
+      Sem o iframe noscript do GTM aqui de propósito: sem JS não há como
+      mostrar o banner de consentimento nem respeitar uma recusa, então
+      carregar o GTM incondicionalmente para esse caso violaria a mesma
+      regra que o resto deste arquivo aplica (nada roda sem aceite).
+    -->
 
     <slot />
 
     <!-- =========================================
-         AVISO DE PRIVACIDADE
+         CONSENTIMENTO DE COOKIES
          =========================================
 
-         Nota mínima: este site coleta dados de
-         navegação (visitas, tempo de permanência,
-         interação com as seções) para melhorar a
-         experiência e a performance de marketing.
+         Fica escondido por padrão (removido via
+         JS só se ainda não houver decisão) — sem
+         JS, sem decisão, então nada de rastreio
+         (ver bysLoadGtm acima e
+         lib/consent/cookieConsent.js).
+
+         Cores propositalmente iguais ao restante
+         do "chrome" do site (cabeçalho, página de
+         obrigado) — fundo escuro, texto claro,
+         detalhe dourado — em vez das cores claras
+         específicas da seção de contato, já que
+         isso é parte da interface do site, não
+         conteúdo de uma seção.
     -->
 
-    <p class="privacy-notice">
-      Este site coleta dados de navegação (visitas, tempo de permanência,
-      interação com as seções) para melhorar a experiência e o desempenho
-      das campanhas. Ao continuar navegando, você concorda com essa coleta.
-    </p>
+    <div class="cookie-banner" data-cookie-banner hidden>
+      <p class="cookie-banner__text">
+        Este site coleta dados de navegação (visitas, tempo de permanência,
+        interação com as seções) para melhorar a experiência e o desempenho
+        das campanhas. Você pode aceitar ou recusar.
+      </p>
+
+      <div class="cookie-banner__actions">
+        <button type="button" class="cookie-banner__decline" data-cookie-decline>
+          Recusar
+        </button>
+
+        <button type="button" class="cookie-banner__accept" data-cookie-accept>
+          Aceitar
+        </button>
+      </div>
+    </div>
+
+    <script>
+      import {
+        getConsent,
+        acceptConsent,
+        declineConsent,
+      } from "../lib/consent/cookieConsent.js";
+
+      const banner =
+        document.querySelector(
+          "[data-cookie-banner]"
+        );
+
+      if (banner instanceof HTMLElement) {
+        if (getConsent() === null) {
+          banner.hidden = false;
+        }
+
+        const acceptButton =
+          banner.querySelector(
+            "[data-cookie-accept]"
+          );
+
+        const declineButton =
+          banner.querySelector(
+            "[data-cookie-decline]"
+          );
+
+        acceptButton?.addEventListener(
+          "click",
+          () => {
+            acceptConsent();
+            window.__bysLoadGtm?.();
+            banner.hidden = true;
+          }
+        );
+
+        declineButton?.addEventListener(
+          "click",
+          () => {
+            declineConsent();
+            banner.hidden = true;
+          }
+        );
+      }
+    </script>
   </body>
 </html>
 
 <style>
-  .privacy-notice {
-    max-width: 42rem;
+  .cookie-banner {
+    position: fixed;
 
-    margin: 0 auto;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
 
-    padding: 1.25rem var(--page-inline, 1.5rem) 2rem;
+    z-index: 1000;
 
-    color: rgba(42, 42, 42, 0.5);
+    display: flex;
+
+    max-width: 34rem;
+
+    margin-inline: auto;
+
+    flex-direction: column;
+
+    gap: 1rem;
+
+    padding: 1.25rem 1.5rem;
+
+    border: 1px solid rgba(246, 244, 240, 0.14);
+    border-radius: 4px;
+
+    background: var(--color-deep);
+
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.4);
+  }
+
+  .cookie-banner__text {
+    margin: 0;
+
+    color: rgba(246, 244, 240, 0.78);
+
+    font-family: var(--font-sans);
+
+    font-size: 0.68rem;
+
+    line-height: 1.7;
+  }
+
+  .cookie-banner__actions {
+    display: flex;
+
+    gap: 1.25rem;
+
+    align-items: center;
+
+    justify-content: flex-end;
+  }
+
+  .cookie-banner__decline,
+  .cookie-banner__accept {
+    padding: 0.5rem 0;
+
+    border: 0;
+
+    background: none;
 
     font-family: var(--font-sans);
 
     font-size: 0.62rem;
+    font-weight: 500;
 
-    line-height: 1.6;
+    letter-spacing: 0.14em;
 
-    text-align: center;
+    text-transform: uppercase;
 
-    background: var(--color-light);
+    cursor: pointer;
+  }
+
+  .cookie-banner__decline {
+    color: rgba(246, 244, 240, 0.55);
+  }
+
+  .cookie-banner__decline:hover {
+    color: rgba(246, 244, 240, 0.85);
+  }
+
+  .cookie-banner__accept {
+    color: var(--color-light);
+
+    border-bottom: 1px solid var(--color-gold);
+  }
+
+  .cookie-banner__accept:hover {
+    color: var(--color-gold);
+  }
+
+  @media (min-width: 40rem) {
+    .cookie-banner {
+      flex-direction: row;
+
+      align-items: center;
+
+      justify-content: space-between;
+    }
+
+    .cookie-banner__text {
+      flex: 1;
+    }
   }
 </style>
