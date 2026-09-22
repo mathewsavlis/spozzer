@@ -39,20 +39,7 @@ export function initPageAnimations() {
   let secondaryTaskId = null;
   let secondaryTaskType = null;
 
-  /*
-   * =========================================
-   * VISITOR ANALYTICS
-   * =========================================
-   *
-   * Início cedo (não espera as experiências
-   * secundárias) para que as seções sejam
-   * observadas o quanto antes — engajamento
-   * logo no início da visita não pode ficar
-   * de fora da contagem.
-   */
-
-  const { markFormSubmitted } =
-    initSessionTracking();
+  let markFormSubmitted = () => {};
 
   /*
    * =========================================
@@ -81,6 +68,30 @@ export function initPageAnimations() {
       .classList.add("js-fallback");
   } finally {
     releaseBootGuard();
+  }
+
+  /*
+   * =========================================
+   * VISITOR ANALYTICS
+   * =========================================
+   *
+   * A Intro permanece como prioridade absoluta.
+   * O tracking começa logo depois do boot crítico,
+   * antes das experiências secundárias, sem impedir
+   * que o Hero seja inicializado primeiro.
+   */
+
+  try {
+    const tracking =
+      initSessionTracking();
+
+    markFormSubmitted =
+      tracking.markFormSubmitted;
+  } catch (error) {
+    console.error(
+      "Falha ao iniciar analytics de sessão:",
+      error
+    );
   }
 
   /*

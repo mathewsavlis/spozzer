@@ -513,6 +513,22 @@ export function initContactExperience({
           "/obrigado"
         );
       } catch (error) {
+        console.error(
+          "Falha ao enviar lead:",
+          {
+            status:
+              error?.status ?? null,
+
+            message:
+              error?.message ??
+              "Erro desconhecido",
+
+            fields:
+              error?.fields ?? null,
+          }
+        );
+
+
         if (
           error.fields &&
           typeof error.fields ===

@@ -41,6 +41,16 @@ jobs:
             exit 1
           fi
 
+          if [ "$PUBLIC_LEADS_API_URL" != "https://spozzer-api.mathewsavlis.workers.dev/leads" ]; then
+            echo "PUBLIC_LEADS_API_URL points to an unexpected endpoint"
+            exit 1
+          fi
+
+          if [ "$PUBLIC_EVENTS_API_URL" != "https://spozzer-api.mathewsavlis.workers.dev/events" ]; then
+            echo "PUBLIC_EVENTS_API_URL points to an unexpected endpoint"
+            exit 1
+          fi
+
       - name: Build Astro site
         uses: withastro/action@v5
         env:
