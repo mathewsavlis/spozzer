@@ -32,29 +32,16 @@ const totalItems = portfolioItems.length;
       <video
         class="hero-video"
         data-hero-video
-        autoplay
+        data-mobile-src={assetPath(heroData.media.mobileMp4)}
+        data-desktop-src={assetPath(heroData.media.desktop)}
         muted
         loop
         playsinline
         webkit-playsinline
-        preload="auto"
+        preload="none"
         disablepictureinpicture
         disableRemotePlayback
-      >
-        <source
-          src={assetPath(heroData.media.mobileMp4)}
-          type="video/mp4"
-          media="(max-width: 47.999rem)"
-        />
-
-        <source
-          src={assetPath(heroData.media.desktop)}
-          type="video/webm"
-          media="(min-width: 48rem)"
-        />
-
-        <source src={assetPath(heroData.media.mobile)} type="video/webm" />
-      </video>
+      ></video>
 
       <div class="hero-overlay" data-hero-overlay></div>
     </div>

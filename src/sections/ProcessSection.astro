@@ -69,6 +69,8 @@ import { assetPath } from "../lib/assets.js";
                   <video
                     class="process__visual process__video"
                     data-process-visual
+                    data-mobile-src={assetPath(processData.media.mobile)}
+                    data-desktop-src={assetPath(processData.media.desktop)}
                     muted
                     loop
                     playsinline
@@ -76,30 +78,7 @@ import { assetPath } from "../lib/assets.js";
                     preload="none"
                     disablepictureinpicture
                     aria-hidden="true"
-                  >
-                    {processData.media.mobile && (
-                      <source
-                        src={assetPath(processData.media.mobile)}
-                        type="video/mp4"
-                        media="(max-width: 47.999rem)"
-                      />
-                    )}
-
-                    {processData.media.desktop && (
-                      <source
-                        src={assetPath(processData.media.desktop)}
-                        type="video/webm"
-                        media="(min-width: 48rem)"
-                      />
-                    )}
-
-                    {processData.media.mobile && (
-                      <source
-                        src={assetPath(processData.media.mobile)}
-                        type="video/mp4"
-                      />
-                    )}
-                  </video>
+                  ></video>
                 )
               }
             </div>

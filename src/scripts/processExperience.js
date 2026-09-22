@@ -283,8 +283,31 @@ export function initProcessExperience() {
           return;
         }
 
+
+        const isMobile =
+          window.matchMedia(
+            MOBILE_QUERY
+          ).matches;
+
+
+        const source =
+          isMobile
+            ? processVideo.dataset.mobileSrc
+            : processVideo.dataset.desktopSrc;
+
+
+        if (!source) {
+          return;
+        }
+
+
         videoPrepared =
           true;
+
+
+        processVideo.src =
+          source;
+
 
         processVideo.load();
       };
@@ -344,7 +367,7 @@ export function initProcessExperience() {
              */
 
             rootMargin:
-              "50% 0px",
+              "15% 0px",
 
             threshold:
               0.01,
@@ -1118,7 +1141,18 @@ export function initProcessExperience() {
     );
 
     videoObserver?.disconnect();
-    processVideo?.pause();
+
+
+    if (processVideo) {
+      processVideo.pause();
+
+      processVideo.removeAttribute(
+        "src"
+      );
+
+      processVideo.load();
+    }
+
 
     mediaQueries.revert();
   };

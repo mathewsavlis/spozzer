@@ -377,6 +377,31 @@ function initHeroVideoPlayback(
     false;
 
 
+  /*
+   * =========================================
+   * RESPONSIVE SOURCE
+   * =========================================
+   *
+   * O HTML não possui mais <source>.
+   *
+   * Escolhemos UMA única mídia somente depois
+   * que o JavaScript já conhece a viewport real.
+   * Isso impede o preload scanner de considerar
+   * simultaneamente os vídeos mobile e desktop.
+   */
+
+  const isMobile =
+    window.matchMedia(
+      MOBILE_QUERY
+    ).matches;
+
+
+  const source =
+    isMobile
+      ? video.dataset.mobileSrc
+      : video.dataset.desktopSrc;
+
+
   const media =
     video.closest(
       ".hero-media"
@@ -403,6 +428,24 @@ function initHeroVideoPlayback(
         "is-video-playing"
       );
     };
+
+
+  if (!source) {
+    video.dataset.playback =
+      "missing-source";
+
+    return () => { };
+  }
+
+
+  /*
+   * A URL entra no elemento apenas aqui.
+   * Até este ponto o navegador conhece somente
+   * os data-attributes, que não disparam download.
+   */
+
+  video.src =
+    source;
 
 
   /*
@@ -463,6 +506,9 @@ function initHeroVideoPlayback(
     "playsinline",
     ""
   );
+
+
+  video.load();
 
 
   /*
@@ -684,6 +730,15 @@ function initHeroVideoPlayback(
     media?.classList.remove(
       "is-video-playing"
     );
+
+
+    video.pause();
+
+    video.removeAttribute(
+      "src"
+    );
+
+    video.load();
 
 
     delete video.dataset.playback;
