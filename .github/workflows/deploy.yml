@@ -27,22 +27,36 @@ jobs:
           PUBLIC_EVENTS_API_URL: ${{ vars.PUBLIC_EVENTS_API_URL }}
 
         run: |
-          if [ -z "$PUBLIC_LEADS_API_URL" ]; then
+          LEADS_URL="$(printf '%s' "$PUBLIC_LEADS_API_URL" | xargs)"
+          EVENTS_URL="$(printf '%s' "$PUBLIC_EVENTS_API_URL" | xargs)"
+          WHATSAPP_NUMBER="$(printf '%s' "$PUBLIC_WHATSAPP_NUMBER" | xargs)"
+
+          if [ -z "$LEADS_URL" ]; then
             echo "PUBLIC_LEADS_API_URL is missing"
             exit 1
           fi
 
-          if [ -z "$PUBLIC_WHATSAPP_NUMBER" ]; then
-            echo "PUBLIC_WHATSAPP_NUMBER is missing"
-            exit 1
-          fi
-
-          if [ -z "$PUBLIC_EVENTS_API_URL" ]; then
+          if [ -z "$EVENTS_URL" ]; then
             echo "PUBLIC_EVENTS_API_URL is missing"
             exit 1
           fi
 
-          echo "Public environment variables are configured."
+          if [ -z "$WHATSAPP_NUMBER" ]; then
+            echo "PUBLIC_WHATSAPP_NUMBER is missing"
+            exit 1
+          fi
+
+          if [ "$LEADS_URL" != "https://spozzer-api.mathewsavlis.workers.dev/leads" ]; then
+            echo "PUBLIC_LEADS_API_URL points to an unexpected endpoint"
+            exit 1
+          fi
+
+          if [ "$EVENTS_URL" != "https://spozzer-api.mathewsavlis.workers.dev/events" ]; then
+            echo "PUBLIC_EVENTS_API_URL points to an unexpected endpoint"
+            exit 1
+          fi
+
+          echo "Production environment is valid."
 
       - name: Build Astro site
         uses: withastro/action@v5
