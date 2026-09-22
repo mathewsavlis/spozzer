@@ -1,5 +1,6 @@
 import { getVisitorId } from "./visitorId.js";
 import { getAttribution } from "../leads/attribution.js";
+import { hasAcceptedConsent } from "../consent/cookieConsent.js";
 
 
 const STORAGE_KEY =
@@ -67,7 +68,15 @@ function createRequestId(prefix) {
 }
 
 
+/*
+ * Retorna null sem consentimento aceito — mesma regra do visitorId,
+ * nenhum identificador é criado antes da aceitação.
+ */
 function getSessionId() {
+  if (!hasAcceptedConsent()) {
+    return null;
+  }
+
   try {
     const stored =
       sessionStorage.getItem(
@@ -124,15 +133,12 @@ export function initSessionTracking() {
     };
   }
 
-  const visitorId =
-    getVisitorId();
-
-  const sessionId =
-    getSessionId();
-
-  const requestId =
-    createRequestId("session");
-
+  // Observando desde já é inofensivo (nenhum storage tocado, nenhuma rede
+  // usada) — o que realmente depende de consentimento é gerar/ler os ids e
+  // enviar o beacon, e isso só acontece dentro de send(), avaliado no
+  // momento do envio. Assim, se a pessoa aceitar no meio da visita, o
+  // beacon final sai corretamente identificado sem precisar reiniciar nada
+  // aqui.
   const startedAt =
     Date.now();
 
@@ -261,6 +267,20 @@ export function initSessionTracking() {
 
   function send() {
     if (sent) return;
+
+    // Verificado aqui, não na inicialização: a pessoa pode aceitar o
+    // consentimento a qualquer momento da visita, depois deste rastreamento
+    // já ter começado a observar as seções.
+    if (!hasAcceptedConsent()) return;
+
+    const visitorId =
+      getVisitorId();
+
+    const sessionId =
+      getSessionId();
+
+    if (!visitorId || !sessionId) return;
+
     sent = true;
 
     observer.disconnect();
@@ -272,7 +292,8 @@ export function initSessionTracking() {
       Date.now();
 
     const payload = {
-      requestId,
+      requestId:
+        createRequestId("session"),
       visitorId,
       sessionId,
 
@@ -371,6 +392,16 @@ export function initSessionTracking() {
 export function sendWhatsappClickEvent() {
   if (!EVENTS_API_URL) return;
 
+  const visitorId =
+    getVisitorId();
+
+  const sessionId =
+    getSessionId();
+
+  // Sem consentimento, as duas funções acima já retornam null — sem
+  // identificadores, não há o que enviar.
+  if (!visitorId || !sessionId) return;
+
   const now =
     new Date().toISOString();
 
@@ -378,11 +409,8 @@ export function sendWhatsappClickEvent() {
     requestId:
       createRequestId("whatsapp"),
 
-    visitorId:
-      getVisitorId(),
-
-    sessionId:
-      getSessionId(),
+    visitorId,
+    sessionId,
 
     totalDurationMs: 0,
     sectionDurations: {},
