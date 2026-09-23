@@ -330,18 +330,15 @@ export function initTestimonials() {
             closestIndex;
 
 
-          card.setAttribute(
-            "aria-hidden",
-            isActive
-              ? "false"
-              : "true"
-          );
+          const ariaHidden = isActive ? "false" : "true";
+          if (card.getAttribute("aria-hidden") !== ariaHidden) {
+            card.setAttribute("aria-hidden", ariaHidden);
+          }
 
-
-          card.style.pointerEvents =
-            distance <= 1.1
-              ? "auto"
-              : "none";
+          const pointerEvents = distance <= 1.1 ? "auto" : "none";
+          if (card.style.pointerEvents !== pointerEvents) {
+            card.style.pointerEvents = pointerEvents;
+          }
 
         }
       );
@@ -352,9 +349,10 @@ export function initTestimonials() {
         HTMLButtonElement
       ) {
 
-        previousButton.disabled =
-          playhead.position <=
-          0.001;
+        const disabled = playhead.position <= 0.001;
+        if (previousButton.disabled !== disabled) {
+          previousButton.disabled = disabled;
+        }
 
       }
 
@@ -364,9 +362,10 @@ export function initTestimonials() {
         HTMLButtonElement
       ) {
 
-        nextButton.disabled =
-          playhead.position >=
-          lastIndex - 0.001;
+        const disabled = playhead.position >= lastIndex - 0.001;
+        if (nextButton.disabled !== disabled) {
+          nextButton.disabled = disabled;
+        }
 
       }
 

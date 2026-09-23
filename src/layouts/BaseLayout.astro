@@ -13,18 +13,20 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  introGuard?: boolean;
 }
 
 const {
   title = "Sthefani Pozzer | Fotografia",
   description =
     "Fotografia autoral, editorial e experiências visuais construídas com intenção.",
+  introGuard = false,
 } = Astro.props;
 ---
 
 <!doctype html>
 
-<html lang="pt-BR">
+<html lang="pt-BR" data-intro-guard={introGuard ? "true" : undefined}>
   <head>
     <meta charset="UTF-8" />
 
@@ -80,8 +82,10 @@ const {
 
     <script is:inline>
       (() => {
-        const root =
-          document.documentElement;
+        const root = document.documentElement;
+        // A página /obrigado não possui Intro nem initPageAnimations.
+        // Não aplique a ela o bloqueio visual de boot de 3,5 segundos.
+        if (root.dataset.introGuard !== "true") return;
 
         root.classList.add(
           "js"
@@ -124,42 +128,31 @@ const {
 
     <slot />
 
-    <!-- =========================================
-         AVISO DE PRIVACIDADE
-         =========================================
-
-         Nota mínima: este site coleta dados de
-         navegação (visitas, tempo de permanência,
-         interação com as seções) para melhorar a
-         experiência e a performance de marketing.
-    -->
-
-    <p class="privacy-notice">
-      Este site coleta dados de navegação (visitas, tempo de permanência,
-      interação com as seções) para melhorar a experiência e o desempenho
-      das campanhas. Ao continuar navegando, você concorda com essa coleta.
-    </p>
+    <!-- Rodapé contínuo: mesma superfície clara do final de Contact. -->
+    <footer class="site-footer">
+      <p class="privacy-notice">
+        Utilizamos cookies para proporcionar uma melhor experiência de navegação.
+        Você pode gerenciar suas preferências nas configurações do navegador.
+      </p>
+    </footer>
   </body>
 </html>
 
 <style>
+  .site-footer {
+    width: 100%;
+    background: var(--color-light);
+  }
+
   .privacy-notice {
     max-width: 42rem;
-
     margin: 0 auto;
-
     padding: 1.25rem var(--page-inline, 1.5rem) 2rem;
-
     color: rgba(42, 42, 42, 0.5);
-
     font-family: var(--font-sans);
-
     font-size: 0.62rem;
-
     line-height: 1.6;
-
     text-align: center;
-
-    background: var(--color-light);
+    background: transparent;
   }
 </style>

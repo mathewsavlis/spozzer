@@ -50,6 +50,10 @@ function initStableIntroViewport(
   let resizeFrame =
     0;
 
+  // A barra do navegador pode emitir vários eventos com a mesma altura.
+  // Evita invalidar estilos quando a extensão visual não mudou.
+  let appliedExtension = null;
+
 
   const getViewportHeight =
     () => {
@@ -112,9 +116,12 @@ function initStableIntroViewport(
       );
 
 
-      master.style.removeProperty(
-        "--intro-viewport-extension"
-      );
+      if (appliedExtension !== null) {
+        master.style.removeProperty(
+          "--intro-viewport-extension"
+        );
+        appliedExtension = null;
+      }
     };
 
 
@@ -134,9 +141,12 @@ function initStableIntroViewport(
         !mobileQuery.matches ||
         stableHeight <= 0
       ) {
-        master.style.removeProperty(
-          "--intro-viewport-extension"
-        );
+        if (appliedExtension !== null) {
+          master.style.removeProperty(
+            "--intro-viewport-extension"
+          );
+          appliedExtension = null;
+        }
 
         return;
       }
@@ -154,10 +164,13 @@ function initStableIntroViewport(
         );
 
 
-      master.style.setProperty(
-        "--intro-viewport-extension",
-        `${extension}px`
-      );
+      if (extension !== appliedExtension) {
+        master.style.setProperty(
+          "--intro-viewport-extension",
+          `${extension}px`
+        );
+        appliedExtension = extension;
+      }
     };
 
 
@@ -376,6 +389,10 @@ function initHeroVideoPlayback(
   let destroyed =
     false;
 
+  // Inicialmente visível; o observer passa a controlar a reprodução ao
+  // sair/retornar à viewport sem tocar nas timelines de animação.
+  let videoIsVisible = true;
+
 
   /*
    * =========================================
@@ -521,7 +538,8 @@ function initHeroVideoPlayback(
     async () => {
       if (
         destroyed ||
-        document.hidden
+        document.hidden ||
+        !videoIsVisible
       ) {
         return false;
       }
@@ -541,6 +559,10 @@ function initHeroVideoPlayback(
       try {
         await video.play();
 
+        if (destroyed || document.hidden || !videoIsVisible) {
+          video.pause();
+          return false;
+        }
 
         markPlaying();
 
@@ -577,9 +599,9 @@ function initHeroVideoPlayback(
 
   const handleVisibilityChange =
     () => {
-      if (
-        !document.hidden
-      ) {
+      if (document.hidden) {
+        video.pause();
+      } else {
         attemptPlay();
       }
     };
@@ -619,11 +641,15 @@ function initHeroVideoPlayback(
     observer =
       new IntersectionObserver(
         (entries) => {
-          if (
-            entries[0]
-              ?.isIntersecting
-          ) {
+          const entry = entries[0];
+          videoIsVisible = Boolean(
+            entry?.isIntersecting && entry.intersectionRatio >= 0.05
+          );
+
+          if (videoIsVisible) {
             attemptPlay();
+          } else {
+            video.pause();
           }
         },
 

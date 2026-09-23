@@ -347,6 +347,11 @@ export function initSessionTracking() {
     markFormSubmitted() {
       formSubmitted = true;
     },
+    cleanup() {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", send);
+      observer.disconnect();
+    },
   };
 }
 

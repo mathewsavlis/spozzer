@@ -25,7 +25,23 @@ export function createHorizontalDrag(
   let direction = null;
   let started = false;
 
+  // Eventos pointermove podem chegar mais rápido que a taxa de atualização
+  // da tela. Calculamos a posição final de cada frame apenas uma vez.
+  let moveFrame = 0;
+  let pendingMove = null;
+
+  function flushMove() {
+    moveFrame = 0;
+    if (!pendingMove) return;
+    const move = pendingMove;
+    pendingMove = null;
+    onMove(move);
+  }
+
   function reset() {
+    if (moveFrame) cancelAnimationFrame(moveFrame);
+    moveFrame = 0;
+    pendingMove = null;
     pointerId = null;
 
     direction = null;
@@ -39,6 +55,11 @@ export function createHorizontalDrag(
     ) {
       return;
     }
+
+    // Um novo toque invalida o frame pendente do toque anterior.
+    if (moveFrame) cancelAnimationFrame(moveFrame);
+    moveFrame = 0;
+    pendingMove = null;
 
     pointerId = event.pointerId;
 
@@ -116,11 +137,8 @@ export function createHorizontalDrag(
 
     event.preventDefault();
 
-    onMove({
-      event,
-      deltaX,
-      deltaY,
-    });
+    pendingMove = { event, deltaX, deltaY };
+    if (!moveFrame) moveFrame = requestAnimationFrame(flushMove);
   }
 
   function finish(event) {
@@ -129,6 +147,11 @@ export function createHorizontalDrag(
     ) {
       return;
     }
+
+    // Garante que o último movimento foi renderizado antes do snap,
+    // mesmo quando pointerup ocorre antes do próximo animation frame.
+    if (moveFrame) cancelAnimationFrame(moveFrame);
+    if (pendingMove) flushMove();
 
     const deltaX =
       currentX - startX;
@@ -187,6 +210,7 @@ export function createHorizontalDrag(
   );
 
   return () => {
+    reset();
     target.removeEventListener(
       "pointerdown",
       handlePointerDown

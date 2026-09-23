@@ -262,6 +262,17 @@ export function initProcessExperience() {
   let videoPrepared =
     false;
 
+  let processIsVisible = false;
+
+  const handleVideoVisibility = () => {
+    if (!processVideo) return;
+    if (document.hidden) {
+      processVideo.pause();
+    } else if (processIsVisible) {
+      // Um retorno à aba não depende de uma nova interseção.
+      if (processVideo.paused) processVideo.play().catch(() => {});
+    }
+  };
 
   if (processVideo) {
     processVideo.muted =
@@ -316,6 +327,7 @@ export function initProcessExperience() {
     const playVideo =
       () => {
         prepareVideo();
+        if (document.hidden || !processVideo.paused) return;
 
         const playPromise =
           processVideo.play();
@@ -351,9 +363,8 @@ export function initProcessExperience() {
       videoObserver =
         new IntersectionObserver(
           ([entry]) => {
-            if (
-              entry?.isIntersecting
-            ) {
+            processIsVisible = Boolean(entry?.isIntersecting);
+            if (processIsVisible) {
               playVideo();
             } else {
               pauseVideo();
@@ -379,8 +390,11 @@ export function initProcessExperience() {
         section
       );
     } else {
+      processIsVisible = true;
       playVideo();
     }
+
+    document.addEventListener("visibilitychange", handleVideoVisibility);
   }
 
   /*
@@ -1141,7 +1155,7 @@ export function initProcessExperience() {
     );
 
     videoObserver?.disconnect();
-
+    document.removeEventListener("visibilitychange", handleVideoVisibility);
 
     if (processVideo) {
       processVideo.pause();
